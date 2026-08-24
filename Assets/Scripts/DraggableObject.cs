@@ -98,6 +98,28 @@ public class DraggableObject : MonoBehaviour
         transform.SetPositionAndRotation(position, rotation);
     }
 
+    // Chiamato da un PieceRespawnVolume quando il pezzo cade sotto la mappa: interrompe un
+    // eventuale trascinamento in corso, azzera la velocità residua e lo riporta al punto di spawn.
+    public void ResetToSpawn(Vector3 position, Quaternion rotation)
+    {
+        if (isLocked)
+        {
+            return;
+        }
+
+        isDragging = false;
+
+        if (rb != null)
+        {
+            rb.useGravity = true;
+            rb.isKinematic = false;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        transform.SetPositionAndRotation(position, rotation);
+    }
+
     private void FixedUpdate()
     {
         float t = Time.fixedDeltaTime * dragSmoothing;

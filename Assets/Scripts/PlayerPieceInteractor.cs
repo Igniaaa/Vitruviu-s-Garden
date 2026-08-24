@@ -58,6 +58,12 @@ public class PlayerPieceInteractor : MonoBehaviour
             return;
         }
 
+        if (ArchitectDialoguePanel.Instance != null && ArchitectDialoguePanel.Instance.IsDialogueActive)
+        {
+            UpdatePrompt(false, heldPiece != null);
+            return;
+        }
+
         DraggableObject lookedAtPiece = heldPiece == null ? FindInteractablePiece() : null;
 
         if (heldPiece != null || lookedAtPiece != null)
@@ -90,7 +96,10 @@ public class PlayerPieceInteractor : MonoBehaviour
     private DraggableObject FindInteractablePiece()
     {
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
-        if (!Physics.SphereCast(ray, aimRadius, out RaycastHit hit, interactRange))
+
+        // Ignora i collider trigger: i PlaceholderSlot ne hanno sempre uno e non devono
+        // intercettare la mira del giocatore al posto del pezzo vero.
+        if (!Physics.SphereCast(ray, aimRadius, out RaycastHit hit, interactRange, Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
         {
             return null;
         }
