@@ -8,6 +8,10 @@ public class DraggableObject : MonoBehaviour
 {
     [SerializeField] private float dragSmoothing = 25f;
 
+    // Velocità massima (m/s) con cui il pezzo insegue il punto di aggancio mentre è in mano:
+    // evita uno strattone violento se il target è lontano appena dopo l'aggancio.
+    [SerializeField] private float maxHoldSpeed = 10f;
+
     // Frazione della dimensione originale a cui rimpicciolisce il pezzo mentre è in mano
     // (1 = nessun rimpicciolimento). Torna alla dimensione originale al rilascio o allo snap.
     [SerializeField] [Range(0.1f, 1f)] private float heldScale = 0.6f;
@@ -34,6 +38,14 @@ public class DraggableObject : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         originalScale = transform.localScale;
+
+        // Il pezzo viene spostato per velocità (non teletrasportato) mentre è in mano: la
+        // Continuous Dynamic evita che attraversi pavimento/muri sottili se il giocatore
+        // lo muove rapidamente.
+        if (rb != null)
+        {
+            rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+        }
     }
 
     // Chiamato dal PlayerPieceInteractor quando il giocatore afferra il pezzo.
@@ -47,10 +59,15 @@ public class DraggableObject : MonoBehaviour
         isDragging = true;
         targetPosition = transform.position;
 
+        // Rimane non kinematico apposta: così le collisioni con l'ambiente restano attive
+        // mentre viene trascinato (vedi FixedUpdate, che lo spinge per velocità verso il target
+        // invece di teletrasportarlo con MovePosition). La rotazione fisica viene invece
+        // bloccata: senza, un urto imprime velocità angolare che non si smorza mai da sola e lo
+        // fa girare a oltranza, causando urti ripetuti a catena contro lo stesso ostacolo.
         if (rb != null)
         {
             rb.useGravity = false;
-            rb.isKinematic = true;
+            rb.freezeRotation = true;
         }
     }
 
@@ -66,7 +83,8 @@ public class DraggableObject : MonoBehaviour
         targetPosition = worldPosition;
     }
 
-    // Chiamato dal PlayerPieceInteractor quando il giocatore rilascia il pezzo.
+    // Chiamato dal PlayerPieceInteractor quando il giocatore rilascia il pezzo: inerziale,
+    // mantiene la velocità con cui lo stava inseguendo mentre era in mano (vedi FixedUpdate).
     public void EndDrag()
     {
         isDragging = false;
@@ -74,7 +92,7 @@ public class DraggableObject : MonoBehaviour
         if (rb != null)
         {
             rb.useGravity = true;
-            rb.isKinematic = false;
+            rb.freezeRotation = false;
         }
 
         // Un eventuale PlaceholderSlot in ascolto decide qui se agganciare il pezzo
@@ -92,6 +110,7 @@ public class DraggableObject : MonoBehaviour
         if (rb != null)
         {
             rb.useGravity = false;
+            rb.freezeRotation = false;
             rb.isKinematic = true;
         }
 
@@ -113,6 +132,7 @@ public class DraggableObject : MonoBehaviour
         {
             rb.useGravity = true;
             rb.isKinematic = false;
+            rb.freezeRotation = false;
             rb.linearVelocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
         }
@@ -128,7 +148,15 @@ public class DraggableObject : MonoBehaviour
         {
             if (rb != null)
             {
-                rb.MovePosition(Vector3.Lerp(rb.position, targetPosition, t));
+                // Spinto per velocità verso il target (non teletrasportato): un ostacolo solido
+                // sul percorso lo ferma naturalmente invece di lasciarlo attraversare.
+                Vector3 desiredVelocity = (targetPosition - rb.position) * dragSmoothing;
+                if (desiredVelocity.sqrMagnitude > maxHoldSpeed * maxHoldSpeed)
+                {
+                    desiredVelocity = desiredVelocity.normalized * maxHoldSpeed;
+                }
+
+                rb.linearVelocity = desiredVelocity;
             }
             else
             {
