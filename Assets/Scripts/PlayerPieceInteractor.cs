@@ -64,6 +64,12 @@ public class PlayerPieceInteractor : MonoBehaviour
             return;
         }
 
+        if (DialogueJournalPanel.Instance != null && DialogueJournalPanel.Instance.IsJournalActive)
+        {
+            UpdatePrompt(false, heldPiece != null);
+            return;
+        }
+
         DraggableObject lookedAtPiece = heldPiece == null ? FindInteractablePiece() : null;
 
         if (heldPiece != null || lookedAtPiece != null)

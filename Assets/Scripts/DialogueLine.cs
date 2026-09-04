@@ -25,4 +25,26 @@ public struct Milestone
     public string label;
     public int piecesRequired;
     public DialogueLine[] dialogue;
+
+    // Estratto del De Architectura legato a questa milestone, mostrato insieme al dialogo
+    // nella schermata del diario.
+    [TextArea(2, 6)] public string deArchitecturaExcerpt;
+}
+
+// Una voce del diario dei dialoghi: il dialogo mostrato per una milestone raggiunta, insieme
+// all'estratto del De Architectura associato. DialogueLog la crea quando la milestone scatta;
+// la schermata dedicata la legge per presentare lo scambio e l'estratto.
+[System.Serializable]
+public struct DialogueLogEntry
+{
+    public string milestoneLabel;
+    public DialogueLine[] dialogue;
+    public string deArchitecturaExcerpt;
+
+    public DialogueLogEntry(string milestoneLabel, DialogueLine[] dialogue, string deArchitecturaExcerpt)
+    {
+        this.milestoneLabel = milestoneLabel;
+        this.dialogue = dialogue;
+        this.deArchitecturaExcerpt = deArchitecturaExcerpt;
+    }
 }
