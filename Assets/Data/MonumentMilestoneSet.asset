@@ -17,9 +17,17 @@ MonoBehaviour:
     piecesRequired: 1
     dialogue:
     - speaker: 1
-      text: Lorem Ipsum
+      text: Dio Magnetico nella valle \n dei cazzi di ferro
     - speaker: 1
       text: 'Esmund Es
 
 '
+    deArchitecturaExcerpt: 
+  - label: Colonne Costruite
+    piecesRequired: 1
+    dialogue:
+    - speaker: 1
+      text: Cazzi
+    - speaker: 1
+      text: Nel culo
     deArchitecturaExcerpt: 
