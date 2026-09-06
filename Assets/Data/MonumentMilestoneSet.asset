@@ -18,7 +18,7 @@ MonoBehaviour:
     dialogue:
     - speaker: 1
       text: Dio Magnetico nella valle \n dei cazzi di ferro
-    - speaker: 1
+    - speaker: 0
       text: 'Esmund Es
 
 '

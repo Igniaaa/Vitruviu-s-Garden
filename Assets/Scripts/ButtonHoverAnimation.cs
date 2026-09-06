@@ -21,6 +21,7 @@ public class ButtonHoverAnimation : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        AudioManager.Instance.PlayUISFX("buttonpop");   
         currentTween?.Kill();
         currentTween = transform.DOScale(originalScale * hoverScale, duration).SetEase(ease);
     }

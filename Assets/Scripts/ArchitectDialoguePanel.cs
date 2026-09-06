@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 // Esegue a schermo uno scambio di battute tra Vitruvio e l'Imperatore, una alla volta
 // (si avanza premendo advanceKey). Non decide da sé quando partire: è MonumentProgressTracker
@@ -17,6 +18,16 @@ public class ArchitectDialoguePanel : MonoBehaviour
     [SerializeField] private TMP_Text speakerText;
     [SerializeField] private TMP_Text lineText;
     [SerializeField] private Key advanceKey = Key.E;
+
+    // I due ritratti sono due Image separate e già posizionate in scena (una a sinistra
+    // per Vitruvio, una a destra per l'Imperatore, o viceversa): qui non si scambia lo
+    // sprite, si evidenzia semplicemente chi sta parlando schiarendo la sua Image e
+    // scurendo l'altra.
+    [Header("Ritratti")]
+    [SerializeField] private Image vitruvioPortraitImage;
+    [SerializeField] private Image imperatorePortraitImage;
+    [SerializeField] private Color activeSpeakerColor = Color.white;
+    [SerializeField] private Color inactiveSpeakerColor = new Color(0.4f, 0.4f, 0.4f, 1f);
 
     private readonly Queue<DialogueLine> queue = new Queue<DialogueLine>();
 
@@ -86,6 +97,21 @@ public class ArchitectDialoguePanel : MonoBehaviour
         if (lineText != null)
         {
             lineText.text = line.text;
+        }
+
+        SetActiveSpeaker(line.speaker);
+    }
+
+    private void SetActiveSpeaker(Speaker speaker)
+    {
+        if (vitruvioPortraitImage != null)
+        {
+            vitruvioPortraitImage.color = speaker == Speaker.Vitruvio ? activeSpeakerColor : inactiveSpeakerColor;
+        }
+
+        if (imperatorePortraitImage != null)
+        {
+            imperatorePortraitImage.color = speaker == Speaker.Imperatore ? activeSpeakerColor : inactiveSpeakerColor;
         }
     }
 

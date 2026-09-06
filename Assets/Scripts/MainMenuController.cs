@@ -1,15 +1,21 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Menu principale: i tre pannelli (principale, impostazioni, conferma uscita) li costruisci
-// tu in Editor (Canvas/Image/Button) e li assegni nell'Inspector, come per ArchitectDialoguePanel
-// e DialogueJournalPanel — questo script si limita ad attivarli/disattivarli e a collegare
-// i bottoni. Ogni metodo pubblico va agganciato all'evento OnClick() del bottone corrispondente.
+// Menu principale: i pannelli (principale, pre-partita, impostazioni, conferma uscita) li
+// costruisci tu in Editor (Canvas/Image/Button) e li assegni nell'Inspector, come per
+// ArchitectDialoguePanel e DialogueJournalPanel — questo script si limita ad attivarli/
+// disattivarli e a collegare i bottoni. Ogni metodo pubblico va agganciato all'evento
+// OnClick() del bottone corrispondente.
+//
+// Il bottone "Inizia Partita" resta collegato a StartGame(): ora apre il pannello
+// pre-partita invece di caricare subito la scena. Il vero avvio della scena di gioco
+// è ConfirmStartGame(), da agganciare al bottone "Continua"/"Entra" di quel pannello.
 public class MainMenuController : MonoBehaviour
 {
     [SerializeField] private string gameSceneName = "GameScene";
 
     [SerializeField] private GameObject mainPanel;
+    [SerializeField] private GameObject preGamePanel;
     [SerializeField] private GameObject settingsPanel;
     [SerializeField] private GameObject quitConfirmationPanel;
 
@@ -19,6 +25,16 @@ public class MainMenuController : MonoBehaviour
     }
 
     public void StartGame()
+    {
+        SetActivePanel(preGamePanel);
+    }
+
+    public void CancelPreGame()
+    {
+        ShowMainPanel();
+    }
+
+    public void ConfirmStartGame()
     {
         SceneManager.LoadScene(gameSceneName);
     }
@@ -60,6 +76,7 @@ public class MainMenuController : MonoBehaviour
     private void SetActivePanel(GameObject panelToShow)
     {
         if (mainPanel != null) mainPanel.SetActive(panelToShow == mainPanel);
+        if (preGamePanel != null) preGamePanel.SetActive(panelToShow == preGamePanel);
         if (settingsPanel != null) settingsPanel.SetActive(panelToShow == settingsPanel);
         if (quitConfirmationPanel != null) quitConfirmationPanel.SetActive(panelToShow == quitConfirmationPanel);
     }
