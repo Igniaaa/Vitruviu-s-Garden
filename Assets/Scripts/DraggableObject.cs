@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 // Il posizionamento durante il trascinamento è pilotato dall'esterno (vedi PlayerPieceInteractor:
@@ -20,7 +21,14 @@ public class DraggableObject : MonoBehaviour
     // con il pieceId impostato sul placeholder corrispondente).
     [SerializeField] private string pieceId;
 
+    // Tutti i pezzi già agganciati a un PlaceholderSlot: usato per sospendere la collisione
+    // tra il pezzo in mano e la struttura già costruita mentre viene trascinato (vedi
+    // BeginDrag/EndDrag), evitando che ci si incastri contro un pezzo fermo mentre il
+    // giocatore continua a muoversi.
+    private static readonly List<DraggableObject> lockedPieces = new List<DraggableObject>();
+
     private Rigidbody rb;
+    private Collider col;
     private Vector3 targetPosition;
     private Vector3 originalScale;
     private bool isDragging;
@@ -37,6 +45,7 @@ public class DraggableObject : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
         originalScale = transform.localScale;
 
         // Il pezzo viene spostato per velocità (non teletrasportato) mentre è in mano: la
@@ -69,6 +78,8 @@ public class DraggableObject : MonoBehaviour
             rb.useGravity = false;
             rb.freezeRotation = true;
         }
+
+        SetCollisionWithLockedPieces(true);
     }
 
     // Chiamato ad ogni frame dal PlayerPieceInteractor mentre il pezzo è tenuto in mano,
@@ -95,6 +106,8 @@ public class DraggableObject : MonoBehaviour
             rb.freezeRotation = false;
         }
 
+        SetCollisionWithLockedPieces(false);
+
         // Un eventuale PlaceholderSlot in ascolto decide qui se agganciare il pezzo
         // (vedi PlaceholderSlot.HandleDraggableReleased -> LockAt).
         OnReleased?.Invoke(this);
@@ -115,6 +128,11 @@ public class DraggableObject : MonoBehaviour
         }
 
         transform.SetPositionAndRotation(position, rotation);
+
+        if (!lockedPieces.Contains(this))
+        {
+            lockedPieces.Add(this);
+        }
     }
 
     // Chiamato da un PieceRespawnVolume quando il pezzo cade sotto la mappa: interrompe un
@@ -137,7 +155,28 @@ public class DraggableObject : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
+        SetCollisionWithLockedPieces(false);
+
         transform.SetPositionAndRotation(position, rotation);
+    }
+
+    // Sospende o ripristina la collisione tra questo pezzo e tutti quelli già agganciati:
+    // chiamato all'inizio/fine del trascinamento, così mentre è in mano può passare vicino
+    // alla struttura già costruita senza incastrarcisi.
+    private void SetCollisionWithLockedPieces(bool ignore)
+    {
+        if (col == null)
+        {
+            return;
+        }
+
+        foreach (DraggableObject locked in lockedPieces)
+        {
+            if (locked != this && locked.col != null)
+            {
+                Physics.IgnoreCollision(col, locked.col, ignore);
+            }
+        }
     }
 
     private void FixedUpdate()

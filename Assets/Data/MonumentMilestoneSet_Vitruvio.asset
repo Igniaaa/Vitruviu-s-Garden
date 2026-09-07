@@ -1,0 +1,278 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6d35e281b384534b6fda54d1c3230d9, type: 3}
+  m_Name: MonumentMilestoneSet_Vitruvio
+  m_EditorClassIdentifier: Assembly-CSharp::MonumentMilestoneSet
+  milestones:
+  - label: 1 - Fondamenta gettate
+    piecesRequired: 2
+    dialogue:
+    - speaker: 1
+      text: "Ho visto il tuo disegno, Vitruvio. Ma qui non c'\xE8 ancora nulla: solo
+        una fossa."
+    - speaker: 0
+      text: "C'\xE8 la parte che nessuno loder\xE0 mai, Cesare. La fossa scende fino
+        al sodo, alla terra che non cede."
+    - speaker: 1
+      text: E se avessi scavato di meno?
+    - speaker: 0
+      text: "Avrei costruito pi\xF9 in fretta, e tu avresti un monumento che si crepa
+        al primo inverno. La fortezza non dipende dall'ingegno: dipende dal non essere
+        avari nella scelta dei materiali."
+    - speaker: 1
+      text: Parli come un soldato, non come un artista.
+    - speaker: 0
+      text: 'Un''opera regge su tre cose insieme: che stia in piedi, che serva, che
+        sia bella. Se togli la prima, le altre due non hanno dove appoggiarsi.'
+    deArchitecturaExcerpt: "Libro I, cap. III. In tutte queste cose si hanno ad aver
+      presenti la Fortezza, il Comodo, e la Bellezza. La Fortezza dipende dal calare
+      i fondamenti fino al sodo, e fare senza avarizia esatta scelta dei materiali.
+      Il Comodo dall'esatta distribuzione dei membri dell'edifizio, senza che ne
+      resti impedito l'uso, anzi abbia ciascuno l'aspetto suo proprio, e necessario.
+      La Bellezza finalmente dall'aspetto dell'opera, se sar\xE0 piacevole, e di
+      buon gusto, e le misure dei membri avranno le giuste proporzioni."
+  - label: 2 - Pavimento costruito
+    piecesRequired: 14
+    dialogue:
+    - speaker: 1
+      text: "Il pavimento \xE8 finito, ed \xE8 bello. Quanto tempo ci \xE8 voluto?"
+    - speaker: 0
+      text: "Quello che vedi \xE8 l'ultimo di quattro strati. Sotto ci sono i sassolini,
+        poi lo smalto battuto a bastonate finch\xE9 non suona compatto, poi l'anima
+        di cocci e calce."
+    - speaker: 1
+      text: "Nessuno vedr\xE0 mai quei tre strati."
+    - speaker: 0
+      text: "Li sentiranno sotto i piedi per duecento anni. Un pavimento non si giudica
+        il giorno in cui \xE8 finito: si giudica il giorno in cui non si crepa."
+    - speaker: 1
+      text: E quella pendenza verso il canale?
+    - speaker: 0
+      text: 'Due dita ogni dieci piedi. L''acqua non discute: se non le dai una strada,
+        se la prende.'
+    deArchitecturaExcerpt: "Libro VII, cap. I. Comincer\xF2 primieramente dallo smalto,
+      ch'\xE8 il primo tra i pulimenti, affinch\xE9 si ponga tutta la maggior cura
+      ed attenzione alla sodezza. Se dunque si dovr\xE0 fare lo smalto sul pian terreno,
+      si esamini, se il suolo \xE8 da per tutto sodo, indi si spiani e vi si stenda
+      il primo suolo di calcinaccio. Lo smalto si assoder\xE0 facendolo ben bene
+      battere con bastoni di legno da quantit\xE0 d'uomini s\xEC, che battuto e finito
+      che sar\xE0, rimanga di non minore altezza di oncie nove. Si stende sopra di
+      questo l'anima di cocci temperati di tre parti de' medesimi con una di calce.
+      Sopra l'anima finalmente si faranno esattamente diritti, e a livello i pavimenti
+      o di quadrelli, o di mosaico."
+  - label: 3 - Colonne erette
+    piecesRequired: 26
+    dialogue:
+    - speaker: 1
+      text: "Perch\xE9 colonne cos\xEC grosse? Pi\xF9 sottili sembrerebbero pi\xF9
+        eleganti."
+    - speaker: 0
+      text: "Perch\xE9 il loro spessore non \xE8 una mia opinione: \xE8 un modulo.
+        Fissato quello, tutto il resto discende, l'altezza, l'intercolunnio, la trabeazione."
+    - speaker: 1
+      text: Un modulo preso da dove?
+    - speaker: 0
+      text: "Dal corpo umano. I primi che alzarono un tempio dorico misurarono la
+        pianta del piede di un uomo, videro che \xE8 la sesta parte della sua altezza,
+        e diedero alla colonna sei spessori."
+    - speaker: 1
+      text: Vuoi dirmi che questo colonnato ha le proporzioni di un uomo?
+    - speaker: 0
+      text: "Ha le sue. Distendi braccia e piedi, punta il compasso sull'ombelico:
+        il cerchio ti tocca le dita. Misura poi da terra al capo e da mano a mano:
+        \xE8 un quadrato. La natura ha gi\xE0 risolto il problema. Noi lo copiamo."
+    deArchitecturaExcerpt: "Libro III, cap. I. Non pu\xF2 fabbrica alcuna dirsi ben
+      composta, se non sia fatta con simmetria e proporzione, come l'hanno le membra
+      d'un corpo umano ben formato. Il centro pure, o sia punto di mezzo del corpo
+      naturalmente \xE8 l'umbilico, talmente che se si situa un uomo supino colle
+      mani e co' piedi stesi, e fatto centro nell'umbilico si tiri col compasso un
+      cerchio, questa linea toccher\xE0 le dita d'ambe le mani e piedi; e siccome
+      si adatta il corpo alla figura rotonda, s'adatta anche alla quadrata."
+  - label: 4 - Capitelli posati
+    piecesRequired: 34
+    dialogue:
+    - speaker: 1
+      text: "Corintio. Potevi farli dorici, e costare la met\xE0."
+    - speaker: 0
+      text: Il dorico ha la sodezza e la proporzione di un uomo; lo ionico la delicatezza
+        di una matrona; il corintio imita la tenerezza delle vergini. Tu a chi dedichi
+        questo luogo?
+    - speaker: 1
+      text: Alle Ninfe della fonte.
+    - speaker: 0
+      text: "Allora il corintio \xE8 dovuto, non scelto. \xC8 quello che chiamiamo
+        decoro: dare a ciascuna cosa la forma che le compete."
+    - speaker: 1
+      text: "E chi lo invent\xF2?"
+    - speaker: 0
+      text: "Nessuno. Lo trov\xF2. A Corinto una fanciulla mor\xEC prima delle nozze;
+        la nutrice le pose sul sepolcro un cesto con le cose che le erano care, e
+        lo copr\xEC con una tegola. Il cesto capit\xF2 sulla radice di un acanto.
+        A primavera la pianta sal\xEC lungo i fianchi, e trovando gli angoli della
+        tegola si arricci\xF2 in volute."
+    - speaker: 1
+      text: "E qualcuno pass\xF2 di l\xEC."
+    - speaker: 0
+      text: 'Callimaco. Vide il paniere e le foglie tenere che gli crescevano intorno,
+        e ne fece pietra. Un capitello nato da un giardino e da un lutto. L''architettura
+        non inventa quasi mai: guarda meglio.'
+    deArchitecturaExcerpt: "Libro IV, cap. I. Il terzo ordine, che si chiama Corintio,
+      imita la tenerezza delle vergini. Una vergine Corintia gi\xE0 atta a marito,
+      sorpresa da male, se ne mor\xEC; la sua nutrice port\xF2 delle vivande, che
+      a lei viva solevano piacere, e chiuse ed accomodate in un corbello le pose
+      sopra del sepolcro, e le copr\xEC con un mattone: fu questo corbello a caso
+      situato sulla radice d'un Acanto. Quando fu verso primavera, la radice mand\xF2
+      fuori le foglie e i gambi, i quali crescendo accosto a' fianchi del corbello,
+      e respinti dalla resistenza degli angoli della tegola, furono costretti attortigliarsi
+      in quei canti, che sono ora in luogo delle volute. Callimaco, trovatosi a passare
+      allora presso a quel monumento, vidde il paniere, e le tenere foglie che gli
+      crescevano d'intorno; e piacendogli l'idea e la novit\xE0 della figura, fece
+      a questa simiglianza le colonne presso i Corintj."
+  - label: 5 - Trabeazione compiuta
+    piecesRequired: 42
+    dialogue:
+    - speaker: 1
+      text: E questi blocchi scanalati sul fregio? Servono a qualcosa?
+    - speaker: 0
+      text: "Oggi no. Un tempo s\xEC: erano le teste delle travi che sporgevano dal
+        muro. Le segarono a filo, e l'aspetto riusc\xEC brutto; allora vi inchiodarono
+        davanti delle tavolette, dipinte di cera turchina."
+    - speaker: 1
+      text: E le tavolette sono diventate i triglifi.
+    - speaker: 0
+      text: "E lo spazio fra una trave e l'altra \xE8 diventato la metopa. Guarda
+        anche i modiglioni sotto il gocciolatoio: sono inclinati perch\xE9 erano
+        i puntoni del tetto, e i puntoni pendono perch\xE9 l'acqua scoli."
+    - speaker: 1
+      text: "Quindi copiamo in marmo un problema di carpenteria che non abbiamo pi\xF9."
+    - speaker: 0
+      text: "Copiamo la ragione per cui una forma \xE8 nata. Chi va dicendo che i
+        triglifi figurino finestre non ha capito nulla: nessuno apre una finestra
+        sopra il mezzo di una colonna."
+    deArchitecturaExcerpt: "Libro IV, cap. II. Gli antichi fabbricatori, poich\xE9
+      ebbero situati i travi con un capo sul muro di dentro, e coll'altro sull'esterno
+      tanto che sporgevano anche fuori, empirono di fabbrica lo spazio rimasto fra
+      i travi; indi segarono a linea ed a piombo delle mura tutte quelle punte di
+      travi che sporgevano in fuora; e perch\xE9 parve poi brutto quell'aspetto,
+      affissero sulla testa tagliata de' travi delle tavolette a quella foggia che
+      si fanno ora i triglifi, e le dipinsero con cera turchina, acciocch\xE9 i tagli
+      de' travi rimanendo coperti non offendessero la vista. Cos\xEC le segature
+      de' travi coperte a figura di triglifi vennero a formare nelle opere Doriche
+      la metopa, ed il triglifo."
+  - label: 6 - Frontone e cornici
+    piecesRequired: 48
+    dialogue:
+    - speaker: 1
+      text: Il mio architetto di corte vorrebbe dei dentelli in questa cornice. Dice
+        che arricchiscono.
+    - speaker: 0
+      text: "I dentelli appartengono allo ionico, i triglifi al dorico. Trasportare
+        le cose proprie di un ordine dentro un altro offende la vista, perch\xE9
+        l'occhio ha gi\xE0 imparato altrove che cosa aspettarsi."
+    - speaker: 1
+      text: "L'occhio pu\xF2 imparare cose nuove."
+    - speaker: 0
+      text: "Pu\xF2. Ma l'euritmia non \xE8 novit\xE0: \xE8 il grato aspetto che
+        nasce quando l'altezza risponde alla larghezza, e la larghezza alla lunghezza.
+        Aggiungi un membro fuori posto e non hai arricchito: hai rotto un accordo."
+    - speaker: 1
+      text: Parli di musica.
+    - speaker: 0
+      text: "Parlo di proporzioni, che \xE8 la stessa cosa detta con altri strumenti.
+        Per questo l'architetto deve saper di musica."
+    deArchitecturaExcerpt: "Libro I, cap. II. L'Euritmia \xE8 il bello e grato aspetto
+      cagionato dalla disposizione delle membra. Si ha, quando di dette membra corrisponde
+      l'altezza con la larghezza, e la larghezza con la lunghezza, ed in somma tutte
+      le cose hanno la loro giusta proporzione. Cos\xEC parimente, se nei corniciami
+      Dorici si scolpiranno dentelli nella cornice, o sopra capitelli e colonne Joniche
+      s'intagliassero Triglifi nelle cornici, trasportando cos\xEC le cose proprie
+      d'un Ordine in un altro, si offender\xE0 la vista; poich\xE9 sono gi\xE0 state
+      nei tempi addietro stabilite consuetudini diverse e proprie in ciascun Ordine."
+  - label: 7 - Copertura posata
+    piecesRequired: 56
+    dialogue:
+    - speaker: 1
+      text: Il tetto. La parte meno nobile dell'opera.
+    - speaker: 0
+      text: "La pi\xF9 antica. Tutto \xE8 cominciato di l\xEC. Gli uomini vivevano
+        nelle selve al pari delle fiere; poi in un certo luogo i venti scossero i
+        folti alberi, i rami si strofinarono fra loro e si accesero."
+    - speaker: 1
+      text: Il fuoco.
+    - speaker: 0
+      text: "Il fuoco li radun\xF2. E per restare vicini dovettero intendersi: formando
+        col fiato voci diverse, andarono creando i vocaboli. Prima la lingua, Cesare.
+        Poi le case."
+    - speaker: 1
+      text: E che case erano?
+    - speaker: 0
+      text: "Chi fece tetti di frondi, chi scav\xF2 spelonche sotto i monti, chi
+        imit\xF2 i nidi delle rondini impastando fango e virgulti. E poich\xE9 la
+        pioggia d'inverno passava, alzarono la copertura a spiovente perch\xE9 l'acqua
+        corresse via."
+    - speaker: 1
+      text: Un gesto da pastori.
+    - speaker: 0
+      text: "Un gesto da uomini. La prima cosa che abbiamo costruito \xE8 stata un
+        riparo. La prima regola dell'architettura \xE8 ancora quella: che l'opera
+        serva."
+    deArchitecturaExcerpt: "Libro II, cap. I. Gli uomini anticamente nascevano al
+      pari delle fiere nelle selve, ne' boschi, e nelle spelonche, e vi menavano
+      la loro vita, nutrendosi di cibi selvaggi. Frattanto in un certo luogo, da'
+      venti e dalle tempeste scossi i folti alberi, e stropicciandosi tra loro i
+      rami, si accesero. In questi congressi, formando gli uomini col fiato diverse
+      voci, andavano di giorno in giorno creando i vocaboli. Cominciarono alcuni
+      a fare i tetti di frondi, altri a scavare spelonche sotto i monti, ed altri
+      ad imitazione de' nidi e delle case delle rondini a fare di fango e virgulti
+      luoghi sotto i quali si potessero ricoverare; ma perch\xE9 queste coperture
+      potessero resistere alle piogge dell'inverno, le fecero aguzze, e cos\xEC,
+      coprendo di loto i tetti inclinati, davano scolo alle acque."
+  - label: 8 - Intonaci e colori
+    piecesRequired: 64
+    dialogue:
+    - speaker: 1
+      text: "\xC8 finito. Ora la decorazione. Voglio qualcosa che nessuno abbia mai
+        visto: colonne di canna, candelabri che reggono casette, steli sottili con
+        figure sedute sopra."
+    - speaker: 0
+      text: Cesare, una canna non regge un tetto. Un candelabro non regge una casa.
+        Uno stelo tenero non regge una figura seduta.
+    - speaker: 1
+      text: "\xC8 pittura. Non deve reggere niente."
+    - speaker: 0
+      text: "Deve essere immagine di cosa che \xE8, o che pu\xF2 essere. Gli antichi
+        dipingevano porti, promontori, boschi, pastori. Oggi si dipingono mostri,
+        e la mente guasta da falsi giudizi non distingue pi\xF9 ci\xF2 che pu\xF2
+        essere da ci\xF2 che non pu\xF2."
+    - speaker: 1
+      text: E il colore? Ho fatto comprare del cinabro.
+    - speaker: 0
+      text: "Usalo parcamente, come si usa un medicamento. Gli antichi ottenevano
+        con l'arte e la fatica quello che oggi si pretende con la spesa: il pregio
+        era dell'artefice, ora \xE8 del padrone che paga."
+    - speaker: 1
+      text: Sei un uomo difficile, Vitruvio.
+    - speaker: 0
+      text: "Sono un uomo che ti consegna un'opera che star\xE0 in piedi, che servir\xE0,
+        e che sar\xE0 bella per le stesse ragioni per cui sta in piedi. Le tre cose
+        sono una sola. Non ho mai saputo separarle."
+    deArchitecturaExcerpt: "Libro VII, cap. V. La pittura in verit\xE0 \xE8 un'immagine
+      di cosa ch'\xE8, o che pu\xF2 essere. Queste pitture pero', ch'erano dagli
+      antichi copiate da cose vere, sono ora per depravato costume disusate; giacch\xE9
+      si dipingono su gl'intonachi mostri piuttosto che immagini di cose vere. Cos\xEC
+      in vece di colonne si pongono canne, e in vece di frontespizj arabeschi scanalati
+      ornati di foglie ricce; quandoch\xE9 queste cose non vi sono, non vi possono
+      essere, n\xE9 mai vi sono state. Come pu\xF2 mai in fatti una canna veramente
+      sostenere un tetto, o un candelabro una casa cogli ornamenti del tetto? Gli
+      antichi s'ingegnavano a forza d'arte e di fatica far piacere quello che ora
+      si ottiene a forza di colori. Chi degli antichi in fatti si \xE8 servito del
+      cinabro, se non parcamente, come di un medicamento?"
