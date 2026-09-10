@@ -28,14 +28,14 @@
                     "name": "Jump",
                     "type": "Button",
                     "id": "8c4abdf8-4099-493a-aa1a-129acec7c3df",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
                     "name": "Sprint",
-                    "type": "PassThrough",
+                    "type": "Button",
                     "id": "980e881e-182c-404c-8cbf-3d09fdb48fef",
                     "expectedControlType": "",
                     "processors": "",
@@ -64,6 +64,15 @@
                     "name": "PreviouseJournalPage",
                     "type": "Button",
                     "id": "11a97ff3-2935-4b15-856e-1346ee2a559b",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "b4a462c3-86ca-4080-ac38-725d89e0c532",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -277,6 +286,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "PreviouseJournalPage",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7e0a9cba-6e66-4089-9994-ff2335f5951c",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "KeyboardMouse",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

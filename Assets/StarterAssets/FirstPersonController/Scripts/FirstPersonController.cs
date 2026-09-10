@@ -1,4 +1,5 @@
-﻿using System.Security.AccessControl;
+﻿using System.Diagnostics;
+using System.Security.AccessControl;
 using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
@@ -112,7 +113,7 @@ namespace StarterAssets
 
 		private void Update()
 		{
-			if (PlayerInputHandler.Instance == null)
+			if (PlayerInputHandler.Instance == null || IsInputBlocked())
 			{
 				return;
 			}
@@ -124,12 +125,25 @@ namespace StarterAssets
 
 		private void LateUpdate()
 		{
-			if (PlayerInputHandler.Instance == null)
+			if (PlayerInputHandler.Instance == null || IsInputBlocked())
 			{
 				return;
 			}
 
 			CameraRotation();
+		}
+
+		// Mentre il quaderno è aperto o il gioco è in pausa, il giocatore non deve potersi
+		// muovere né guardarsi intorno. Serve un controllo esplicito anche per la pausa
+		// perché CameraRotation non scala l'input del mouse per Time.deltaTime (apposta,
+		// per una sensibilità costante indipendente dal framerate): a Time.timeScale 0 lo
+		// sguardo continuerebbe comunque a muoversi se non lo si blocca qui.
+		private bool IsInputBlocked()
+		{
+			bool journalActive = DialogueJournalPanel.Instance != null && DialogueJournalPanel.Instance.IsJournalActive;
+			bool paused = PauseMenuController.Instance != null && PauseMenuController.Instance.IsPaused;
+
+			return journalActive || paused;
 		}
 
 		private void GroundedCheck()
@@ -169,7 +183,7 @@ namespace StarterAssets
 
 			// set target speed based on move speed, sprint speed and if sprint is pressed
 			float targetSpeed = PlayerInputHandler.Instance.SprintTriggered ? SprintSpeed : MoveSpeed;
-
+			UnityEngine.Debug.Log("" + targetSpeed);
 			// a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
 			// note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
@@ -209,7 +223,9 @@ namespace StarterAssets
 			}
 
 			// move the player
-			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+			_controller.Move(inputDirection.normalized * _speed * Time.deltaTime + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
+			//UnityEngine.Debug.Log("" + _speed);
 		}
 
 		private void JumpAndGravity()

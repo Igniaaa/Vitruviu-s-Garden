@@ -128,12 +128,21 @@ public class AudioManager : MonoBehaviour
     }
 
     // Pensati per gli slider del pannello Impostazioni: volume lineare 0-1, convertito in dB
-    // per il parametro esposto dall'AudioMixer.
+    // per il parametro esposto dall'AudioMixer. Le versioni Get servono a inizializzare gli
+    // slider con il valore attuale quando un pannello Impostazioni si apre (es. quello di
+    // GameScene deve riflettere un volume cambiato nel pannello di MainMenu): il volume vero
+    // vive nell'AudioMixer, condiviso tra le scene tramite questo stesso AudioManager
+    // (DontDestroyOnLoad), quindi leggerlo da qui basta a tenere sincronizzati i due pannelli.
     #region Volume
     public void SetMasterVolume(float linearVolume) => SetMixerVolume(masterVolumeParam, linearVolume);
     public void SetMusicVolume(float linearVolume) => SetMixerVolume(musicVolumeParam, linearVolume);
     public void SetSFXVolume(float linearVolume) => SetMixerVolume(sfxVolumeParam, linearVolume);
     public void SetUISFXVolume(float linearVolume) => SetMixerVolume(uiSfxVolumeParam, linearVolume);
+
+    public float GetMasterVolume() => GetMixerVolume(masterVolumeParam);
+    public float GetMusicVolume() => GetMixerVolume(musicVolumeParam);
+    public float GetSFXVolume() => GetMixerVolume(sfxVolumeParam);
+    public float GetUISFXVolume() => GetMixerVolume(uiSfxVolumeParam);
 
     private void SetMixerVolume(string exposedParam, float linearVolume)
     {
@@ -144,6 +153,16 @@ public class AudioManager : MonoBehaviour
 
         float dB = linearVolume > 0.0001f ? Mathf.Log10(linearVolume) * 20f : -80f;
         mixer.SetFloat(exposedParam, dB);
+    }
+
+    private float GetMixerVolume(string exposedParam)
+    {
+        if (mixer == null || !mixer.GetFloat(exposedParam, out float dB))
+        {
+            return 1f;
+        }
+
+        return dB > -79.9f ? Mathf.Pow(10f, dB / 20f) : 0f;
     }
     #endregion
 }

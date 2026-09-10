@@ -14,6 +14,13 @@ using UnityEngine;
 public class PlaceholderSlot : MonoBehaviour
 {
     [SerializeField] private string pieceId;
+
+    // Fase costruttiva a cui appartiene (0 = fondamenta, 1 = colonne, ...): MonumentProgressTracker
+    // tiene visibili/interagibili solo gli slot della fase corrente, e passa a quella
+    // successiva solo quando tutti gli slot della fase presente sono pieni. Più slot possono
+    // condividere la stessa fase (si riempiono in un ordine libero tra loro).
+    [SerializeField] private int buildPhase;
+
     [SerializeField] private Color placeholderColor = new Color(0.3f, 0.7f, 1f, 0.35f);
     [SerializeField] private Color highlightColor = new Color(0.3f, 1f, 0.4f, 0.6f);
     [SerializeField] private Color wrongColor = new Color(0.3f, 1f, 0.4f, 0.6f);
@@ -29,9 +36,12 @@ public class PlaceholderSlot : MonoBehaviour
     private readonly HashSet<DraggableObject> candidates = new HashSet<DraggableObject>();
     private readonly HashSet<DraggableObject> wrongCandidates = new HashSet<DraggableObject>();
     private bool isFilled;
+    private bool isUnlocked = true;
 
     public bool IsFilled => isFilled;
+    public bool IsUnlocked => isUnlocked;
     public string PieceId => pieceId;
+    public int BuildPhase => buildPhase;
 
     // Notifica (es. a un GameManager che tiene traccia del monumento) che questo slot è stato completato.
     public event Action<PlaceholderSlot> OnSlotFilled;
@@ -218,7 +228,7 @@ public class PlaceholderSlot : MonoBehaviour
         }
         candidates.Clear();
 
-        draggable.LockAt(transform.position, transform.rotation);
+        draggable.LockAt(transform.position, transform.rotation, transform.localScale);
 
         foreach (Renderer r in renderers)
         {
@@ -233,5 +243,31 @@ public class PlaceholderSlot : MonoBehaviour
         slotCollider.enabled = false;
 
         OnSlotFilled?.Invoke(this);
+    }
+
+    // Chiamato da MonumentProgressTracker quando la fase costruttiva di questo slot diventa
+    // (o smette di essere) quella corrente: uno slot bloccato è invisibile e il suo Collider
+    // trigger è disattivato, quindi OnTriggerEnter non scatta affatto e non può ricevere pezzi
+    // fuori sequenza, anche se il pieceId corrisponderebbe.
+    public void SetUnlocked(bool unlocked)
+    {
+        isUnlocked = unlocked;
+
+        if (isFilled)
+        {
+            return;
+        }
+
+        foreach (Renderer r in renderers)
+        {
+            r.enabled = unlocked;
+        }
+
+        foreach (Renderer r in wireframeRenderers)
+        {
+            r.enabled = unlocked;
+        }
+
+        slotCollider.enabled = unlocked;
     }
 }

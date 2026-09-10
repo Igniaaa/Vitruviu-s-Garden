@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::MonumentMilestoneSet
   milestones:
   - label: 1 - Fondamenta gettate
-    piecesRequired: 2
+    piecesRequired: 4
     dialogue:
     - speaker: 1
       text: "Ho visto il tuo disegno, Vitruvio. Ma qui non c'\xE8 ancora nulla: solo
@@ -40,8 +40,9 @@ MonoBehaviour:
       resti impedito l'uso, anzi abbia ciascuno l'aspetto suo proprio, e necessario.
       La Bellezza finalmente dall'aspetto dell'opera, se sar\xE0 piacevole, e di
       buon gusto, e le misure dei membri avranno le giuste proporzioni."
+    deArchitecturaPageImage: {fileID: 21300000, guid: 5258e99e7292cae469afbde4661ed3c7, type: 3}
   - label: 2 - Pavimento costruito
-    piecesRequired: 14
+    piecesRequired: 1
     dialogue:
     - speaker: 1
       text: "Il pavimento \xE8 finito, ed \xE8 bello. Quanto tempo ci \xE8 voluto?"
@@ -69,6 +70,7 @@ MonoBehaviour:
       questo l'anima di cocci temperati di tre parti de' medesimi con una di calce.
       Sopra l'anima finalmente si faranno esattamente diritti, e a livello i pavimenti
       o di quadrelli, o di mosaico."
+    deArchitecturaPageImage: {fileID: 0}
   - label: 3 - Colonne erette
     piecesRequired: 26
     dialogue:
@@ -97,6 +99,7 @@ MonoBehaviour:
       mani e co' piedi stesi, e fatto centro nell'umbilico si tiri col compasso un
       cerchio, questa linea toccher\xE0 le dita d'ambe le mani e piedi; e siccome
       si adatta il corpo alla figura rotonda, s'adatta anche alla quadrata."
+    deArchitecturaPageImage: {fileID: 0}
   - label: 4 - Capitelli posati
     piecesRequired: 34
     dialogue:
@@ -137,6 +140,7 @@ MonoBehaviour:
       allora presso a quel monumento, vidde il paniere, e le tenere foglie che gli
       crescevano d'intorno; e piacendogli l'idea e la novit\xE0 della figura, fece
       a questa simiglianza le colonne presso i Corintj."
+    deArchitecturaPageImage: {fileID: 0}
   - label: 5 - Trabeazione compiuta
     piecesRequired: 42
     dialogue:
@@ -168,6 +172,7 @@ MonoBehaviour:
       de' travi rimanendo coperti non offendessero la vista. Cos\xEC le segature
       de' travi coperte a figura di triglifi vennero a formare nelle opere Doriche
       la metopa, ed il triglifo."
+    deArchitecturaPageImage: {fileID: 0}
   - label: 6 - Frontone e cornici
     piecesRequired: 48
     dialogue:
@@ -197,6 +202,7 @@ MonoBehaviour:
       s'intagliassero Triglifi nelle cornici, trasportando cos\xEC le cose proprie
       d'un Ordine in un altro, si offender\xE0 la vista; poich\xE9 sono gi\xE0 state
       nei tempi addietro stabilite consuetudini diverse e proprie in ciascun Ordine."
+    deArchitecturaPageImage: {fileID: 0}
   - label: 7 - Copertura posata
     piecesRequired: 56
     dialogue:
@@ -236,6 +242,7 @@ MonoBehaviour:
       luoghi sotto i quali si potessero ricoverare; ma perch\xE9 queste coperture
       potessero resistere alle piogge dell'inverno, le fecero aguzze, e cos\xEC,
       coprendo di loto i tetti inclinati, davano scolo alle acque."
+    deArchitecturaPageImage: {fileID: 0}
   - label: 8 - Intonaci e colori
     piecesRequired: 64
     dialogue:
@@ -276,3 +283,4 @@ MonoBehaviour:
       antichi s'ingegnavano a forza d'arte e di fatica far piacere quello che ora
       si ottiene a forza di colori. Chi degli antichi in fatti si \xE8 servito del
       cinabro, se non parcamente, come di un medicamento?"
+    deArchitecturaPageImage: {fileID: 0}

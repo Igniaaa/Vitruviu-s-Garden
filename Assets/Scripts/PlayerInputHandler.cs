@@ -25,6 +25,7 @@ public class PlayerInputHandler : MonoBehaviour
     [SerializeField] private string openJournal = "OpenJournal";
     [SerializeField] private string nextJournalPage = "NextJournalPage";
     [SerializeField] private string previousJournalPage = "PreviouseJournalPage";
+    [SerializeField] private string pause = "Pause";
 
     private InputAction movementAction;
     private InputAction lookAction;
@@ -33,6 +34,7 @@ public class PlayerInputHandler : MonoBehaviour
     private InputAction openJournalAction;
     private InputAction nextJournalPageAction;
     private InputAction previousJournalPageAction;
+    private InputAction pauseAction;
 
     public Vector2 MovementInput { get; private set; }
     public bool AnalogMovement { get; private set; }
@@ -44,7 +46,7 @@ public class PlayerInputHandler : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log("<color=yellow>[INPUT] Awake chiamato</color>");
+        //Debug.Log("<color=yellow>[INPUT] Awake chiamato</color>");
 
         if (Instance == null)
         {
@@ -83,6 +85,7 @@ public class PlayerInputHandler : MonoBehaviour
         openJournalAction = mapReference.FindAction(openJournal);
         nextJournalPageAction = mapReference.FindAction(nextJournalPage);
         previousJournalPageAction = mapReference.FindAction(previousJournalPage);
+        pauseAction = mapReference.FindAction(pause);
 
         SubscribeActionValueToInputEvent();
     }
@@ -126,12 +129,17 @@ public class PlayerInputHandler : MonoBehaviour
     {
         return previousJournalPageAction.WasPerformedThisFrame();
     }
+
+    public bool PausePressed()
+    {
+        return pauseAction.WasPerformedThisFrame();
+    }
     #endregion
 
     #region enable disable behavior
     private void OnEnable()
     {
-        Debug.Log("<color=green>[INPUT] OnEnable chiamato → input abilitato</color>");
+        //Debug.Log("<color=green>[INPUT] OnEnable chiamato → input abilitato</color>");
         StartCoroutine(EnableInputNextFrame());
     }
 
@@ -144,7 +152,7 @@ public class PlayerInputHandler : MonoBehaviour
     {
         yield return null;
         EnableInput();
-        EnableEventSystem();
+        ResetUIInputModule();
     }
 
     private void EnableInput()
@@ -153,7 +161,7 @@ public class PlayerInputHandler : MonoBehaviour
         if (map != null)
         {
             map.Enable();
-            Debug.Log("<color=cyan>[INPUT] ActionMap ENABLED</color>");
+            //Debug.Log("<color=cyan>[INPUT] ActionMap ENABLED</color>");
         }
     }
 
@@ -163,28 +171,35 @@ public class PlayerInputHandler : MonoBehaviour
         if (map != null)
         {
             map.Disable();
-            Debug.Log("<color=magenta>[INPUT] ActionMap DISABLED</color>");
+            //Debug.Log("<color=magenta>[INPUT] ActionMap DISABLED</color>");
         }
     }
 
-    private void EnableEventSystem()
+    // Forza l'EventSystem a scordarsi lo stato di hover/pointer che tiene in cache: senza,
+    // riattivare un pannello UI mentre il cursore è rimasto sopra un bottone (es. Riprendi
+    // dal menu di pausa) può lasciarlo "cliccabile ma sordo" all'hover, perché l'EventSystem
+    // pensa di essere già dentro lo stesso oggetto di prima e non rimanda OnPointerEnter.
+    // Disabilitare e riabilitare l'InputSystemUIInputModule lo costringe a reinizializzare
+    // quello stato. Pubblico apposta: PauseMenuController lo richiama alla riapertura del
+    // pannello pausa, non solo PlayerInputHandler all'avvio.
+    public void ResetUIInputModule()
     {
         var uiInputModule = FindAnyObjectByType<UnityEngine.InputSystem.UI.InputSystemUIInputModule>();
         if (uiInputModule != null)
         {
             uiInputModule.enabled = false;
             uiInputModule.enabled = true;
-            Debug.Log("<color=green>[UI] InputSystemUIInputModule resettato automaticamente con successo!</color>");
+            //Debug.Log("<color=green>[UI] InputSystemUIInputModule resettato automaticamente con successo!</color>");
         }
         else
         {
-            Debug.LogWarning("[UI] InputSystemUIInputModule non trovato. Assicurati che sia presente sull'EventSystem della scena di gioco.");
+            //Debug.LogWarning("[UI] InputSystemUIInputModule non trovato. Assicurati che sia presente sull'EventSystem della scena di gioco.");
         }
     }
 
     public void ForceReEnable()
     {
-        Debug.Log("<color=orange>[INPUT] ForceReEnable chiamato</color>");
+        //Debug.Log("<color=orange>[INPUT] ForceReEnable chiamato</color>");
 
         DisableInput();
         EnableInput();

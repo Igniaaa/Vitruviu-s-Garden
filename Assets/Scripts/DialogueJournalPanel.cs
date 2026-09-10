@@ -1,14 +1,20 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 // Quaderno che raccoglie le voci di DialogueLog una alla volta, come una doppia pagina:
-// a sinistra il dialogo della milestone, a destra l'estratto del De Architectura.
+// a sinistra il dialogo della milestone, a destra l'estratto del De Architectura e/o
+// l'immagine della pagina corrispondente (se una milestone non ha immagine assegnata,
+// lo slot resta semplicemente nascosto).
 // L'apertura/chiusura e lo scorrimento pagine passano dalle action OpenJournal,
 // NextJournalPage e PreviouseJournalPage lette tramite PlayerInputHandler (Tab, E e Q
 // nella action map "Player").
 //
-// Mentre il quaderno è aperto, IsJournalActive è true: PlayerPieceInteractor lo controlla
-// per mettere in pausa il grab/rilascio dei pezzi, così E non fa doppio lavoro.
+// Mentre il quaderno è aperto, IsJournalActive è true: PlayerPieceInteractor e
+// FirstPersonController lo controllano per mettere in pausa grab/rilascio, movimento e
+// visuale, così E non fa doppio lavoro e il giocatore non si muove leggendo. All'apertura
+// il cursore torna visibile e sbloccato (per poter interagire con l'immagine della pagina),
+// e viene ri-agganciato alla chiusura.
 public class DialogueJournalPanel : MonoBehaviour
 {
     public static DialogueJournalPanel Instance { get; private set; }
@@ -16,6 +22,7 @@ public class DialogueJournalPanel : MonoBehaviour
     [SerializeField] private GameObject panel;
     [SerializeField] private TMP_Text leftPageText;
     [SerializeField] private TMP_Text rightPageText;
+    [SerializeField] private Image rightPageImage;
     [SerializeField] private TMP_Text pageIndicatorText;
 
     private int currentPage;
@@ -68,7 +75,15 @@ public class DialogueJournalPanel : MonoBehaviour
 
     private bool CanToggle()
     {
-        return IsJournalActive || ArchitectDialoguePanel.Instance == null || !ArchitectDialoguePanel.Instance.IsDialogueActive;
+        if (IsJournalActive)
+        {
+            return true;
+        }
+
+        bool dialogueActive = ArchitectDialoguePanel.Instance != null && ArchitectDialoguePanel.Instance.IsDialogueActive;
+        bool paused = PauseMenuController.Instance != null && PauseMenuController.Instance.IsPaused;
+
+        return !dialogueActive && !paused;
     }
 
     private void Open()
@@ -88,6 +103,9 @@ public class DialogueJournalPanel : MonoBehaviour
             panel.SetActive(true);
         }
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         ShowCurrentPage();
     }
 
@@ -99,6 +117,9 @@ public class DialogueJournalPanel : MonoBehaviour
         {
             panel.SetActive(false);
         }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     private void TurnPage(int direction)
@@ -125,6 +146,12 @@ public class DialogueJournalPanel : MonoBehaviour
         if (rightPageText != null)
         {
             rightPageText.text = entry.deArchitecturaExcerpt;
+        }
+
+        if (rightPageImage != null)
+        {
+            rightPageImage.sprite = entry.deArchitecturaPageImage;
+            rightPageImage.gameObject.SetActive(entry.deArchitecturaPageImage != null);
         }
 
         if (pageIndicatorText != null)

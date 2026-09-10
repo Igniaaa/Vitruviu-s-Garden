@@ -70,6 +70,12 @@ public class PlayerPieceInteractor : MonoBehaviour
             return;
         }
 
+        if (PauseMenuController.Instance != null && PauseMenuController.Instance.IsPaused)
+        {
+            UpdatePrompt(false, heldPiece != null);
+            return;
+        }
+
         DraggableObject lookedAtPiece = heldPiece == null ? FindInteractablePiece() : null;
 
         if (heldPiece != null || lookedAtPiece != null)

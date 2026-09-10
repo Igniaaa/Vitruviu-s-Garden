@@ -10,8 +10,11 @@ public class DraggableObject : MonoBehaviour
     [SerializeField] private float dragSmoothing = 25f;
 
     // Velocità massima (m/s) con cui il pezzo insegue il punto di aggancio mentre è in mano:
-    // evita uno strattone violento se il target è lontano appena dopo l'aggancio.
-    [SerializeField] private float maxHoldSpeed = 10f;
+    // evita uno strattone violento se il target è lontano appena dopo l'aggancio. Deve
+    // restare comunque alta: con holdDistance corto, anche un giro normale della visuale
+    // sposta il target lungo un arco a diversi m/s, e un limite troppo basso lo fa restare
+    // indietro (sembra incastrato mentre in realtà insegue un bersaglio più veloce di lui).
+    [SerializeField] private float maxHoldSpeed = 40f;
 
     // Frazione della dimensione originale a cui rimpicciolisce il pezzo mentre è in mano
     // (1 = nessun rimpicciolimento). Torna alla dimensione originale al rilascio o allo snap.
@@ -29,8 +32,10 @@ public class DraggableObject : MonoBehaviour
 
     private Rigidbody rb;
     private Collider col;
+    private Collider playerCollider;
     private Vector3 targetPosition;
     private Vector3 originalScale;
+    private Vector3 lockedScale;
     private bool isDragging;
     private bool isLocked;
 
@@ -48,12 +53,21 @@ public class DraggableObject : MonoBehaviour
         col = GetComponent<Collider>();
         originalScale = transform.localScale;
 
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            playerCollider = player.GetComponent<Collider>();
+        }
+
         // Il pezzo viene spostato per velocità (non teletrasportato) mentre è in mano: la
         // Continuous Dynamic evita che attraversi pavimento/muri sottili se il giocatore
-        // lo muove rapidamente.
+        // lo muove rapidamente. L'interpolazione invece è quella che elimina lo scatto visivo:
+        // senza, la posizione resta ferma all'ultimo FixedUpdate fino al successivo, ben
+        // visibile su un oggetto tenuto vicino alla camera.
         if (rb != null)
         {
             rb.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
+            rb.interpolation = RigidbodyInterpolation.Interpolate;
         }
     }
 
@@ -79,7 +93,7 @@ public class DraggableObject : MonoBehaviour
             rb.freezeRotation = true;
         }
 
-        SetCollisionWithLockedPieces(true);
+        SetHeldCollisionIgnored(true);
     }
 
     // Chiamato ad ogni frame dal PlayerPieceInteractor mentre il pezzo è tenuto in mano,
@@ -106,19 +120,22 @@ public class DraggableObject : MonoBehaviour
             rb.freezeRotation = false;
         }
 
-        SetCollisionWithLockedPieces(false);
+        SetHeldCollisionIgnored(false);
 
         // Un eventuale PlaceholderSlot in ascolto decide qui se agganciare il pezzo
         // (vedi PlaceholderSlot.HandleDraggableReleased -> LockAt).
         OnReleased?.Invoke(this);
     }
 
-    // Chiamato da un PlaceholderSlot quando il pezzo viene agganciato correttamente:
-    // lo blocca in posizione/rotazione esatte e disattiva ulteriori trascinamenti.
-    public void LockAt(Vector3 position, Quaternion rotation)
+    // Chiamato da un PlaceholderSlot quando il pezzo viene agganciato correttamente: lo
+    // blocca in posizione/rotazione esatte e disattiva ulteriori trascinamenti. La scala
+    // passata (quella del placeholder) diventa il nuovo target di FixedUpdate, che la
+    // raggiunge con lo stesso lerp già usato per lo shrink/ripristino mentre è in mano.
+    public void LockAt(Vector3 position, Quaternion rotation, Vector3 scale)
     {
         isDragging = false;
         isLocked = true;
+        lockedScale = scale;
 
         if (rb != null)
         {
@@ -155,19 +172,26 @@ public class DraggableObject : MonoBehaviour
             rb.angularVelocity = Vector3.zero;
         }
 
-        SetCollisionWithLockedPieces(false);
+        SetHeldCollisionIgnored(false);
 
         transform.SetPositionAndRotation(position, rotation);
     }
 
-    // Sospende o ripristina la collisione tra questo pezzo e tutti quelli già agganciati:
-    // chiamato all'inizio/fine del trascinamento, così mentre è in mano può passare vicino
-    // alla struttura già costruita senza incastrarcisi.
-    private void SetCollisionWithLockedPieces(bool ignore)
+    // Sospende o ripristina la collisione tra questo pezzo e tutti quelli già agganciati,
+    // oltre che con la capsula del giocatore: chiamato all'inizio/fine del trascinamento.
+    // Senza ignorare anche il giocatore, un giro veloce della visuale fa passare il target
+    // (che segue la camera) attraverso la capsula stessa: il pezzo, da Rigidbody, non riesce
+    // a spingerla via e ci resta incastrato contro finché il giocatore non si allontana.
+    private void SetHeldCollisionIgnored(bool ignore)
     {
         if (col == null)
         {
             return;
+        }
+
+        if (playerCollider != null)
+        {
+            Physics.IgnoreCollision(col, playerCollider, ignore);
         }
 
         foreach (DraggableObject locked in lockedPieces)
@@ -203,9 +227,23 @@ public class DraggableObject : MonoBehaviour
             }
         }
 
-        // Rimpicciolito mentre è in mano; torna alla dimensione originale sia al rilascio
-        // libero che allo snap nel placeholder (in entrambi i casi isDragging torna false).
-        Vector3 targetScale = isDragging ? originalScale * heldScale : originalScale;
+        // Rimpicciolito mentre è in mano; una volta agganciato prende la scala del
+        // placeholder (lockedScale), altrimenti (rilasciato ma non agganciato) torna alla
+        // propria dimensione originale.
+        Vector3 targetScale;
+        if (isLocked)
+        {
+            targetScale = lockedScale;
+        }
+        else if (isDragging)
+        {
+            targetScale = originalScale * heldScale;
+        }
+        else
+        {
+            targetScale = originalScale;
+        }
+
         transform.localScale = Vector3.Lerp(transform.localScale, targetScale, t);
     }
 }

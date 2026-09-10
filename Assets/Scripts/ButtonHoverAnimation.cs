@@ -1,3 +1,4 @@
+
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -21,15 +22,17 @@ public class ButtonHoverAnimation : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        AudioManager.Instance.PlayUISFX("buttonpop");   
+        AudioManager.Instance.PlayUISFX("buttonpop");
         currentTween?.Kill();
-        currentTween = transform.DOScale(originalScale * hoverScale, duration).SetEase(ease);
+        // SetUpdate(true) = tempo non scalato: senza, il tween resta fermo quando il menu
+        // di pausa è aperto (Time.timeScale a 0 azzera anche l'avanzamento di DOTween).
+        currentTween = transform.DOScale(originalScale * hoverScale, duration).SetEase(ease).SetUpdate(true);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         currentTween?.Kill();
-        currentTween = transform.DOScale(originalScale, duration).SetEase(ease);
+        currentTween = transform.DOScale(originalScale, duration).SetEase(ease).SetUpdate(true);
     }
 
     private void OnDisable()

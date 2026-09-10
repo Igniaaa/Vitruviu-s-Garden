@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -28,8 +29,12 @@ public class ArchitectDialoguePanel : MonoBehaviour
     [SerializeField] private Image imperatorePortraitImage;
     [SerializeField] private Color activeSpeakerColor = Color.white;
     [SerializeField] private Color inactiveSpeakerColor = new Color(0.4f, 0.4f, 0.4f, 1f);
+    [SerializeField] private float speakerTransitionDuration = 0.3f;
+    [SerializeField] private Ease speakerTransitionEase = Ease.Linear;
 
     private readonly Queue<DialogueLine> queue = new Queue<DialogueLine>();
+    private Tween vitruvioColorTween;
+    private Tween imperatoreColorTween;
 
     public bool IsDialogueActive { get; private set; }
 
@@ -106,12 +111,16 @@ public class ArchitectDialoguePanel : MonoBehaviour
     {
         if (vitruvioPortraitImage != null)
         {
-            vitruvioPortraitImage.color = speaker == Speaker.Vitruvio ? activeSpeakerColor : inactiveSpeakerColor;
+            Color target = speaker == Speaker.Vitruvio ? activeSpeakerColor : inactiveSpeakerColor;
+            vitruvioColorTween?.Kill();
+            vitruvioColorTween = vitruvioPortraitImage.DOColor(target, speakerTransitionDuration).SetEase(speakerTransitionEase);
         }
 
         if (imperatorePortraitImage != null)
         {
-            imperatorePortraitImage.color = speaker == Speaker.Imperatore ? activeSpeakerColor : inactiveSpeakerColor;
+            Color target = speaker == Speaker.Imperatore ? activeSpeakerColor : inactiveSpeakerColor;
+            imperatoreColorTween?.Kill();
+            imperatoreColorTween = imperatorePortraitImage.DOColor(target, speakerTransitionDuration).SetEase(speakerTransitionEase);
         }
     }
 

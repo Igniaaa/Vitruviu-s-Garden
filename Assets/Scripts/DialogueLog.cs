@@ -12,6 +12,6 @@ public static class DialogueLog
 
     public static void AddEntry(Milestone milestone)
     {
-        entries.Add(new DialogueLogEntry(milestone.label, milestone.dialogue, milestone.deArchitecturaExcerpt));
+        entries.Add(new DialogueLogEntry(milestone.label, milestone.dialogue, milestone.deArchitecturaExcerpt, milestone.deArchitecturaPageImage));
     }
 }

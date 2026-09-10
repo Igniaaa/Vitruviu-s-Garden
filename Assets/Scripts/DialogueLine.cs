@@ -29,6 +29,10 @@ public struct Milestone
     // Estratto del De Architectura legato a questa milestone, mostrato insieme al dialogo
     // nella schermata del diario.
     [TextArea(2, 6)] public string deArchitecturaExcerpt;
+
+    // Immagine della pagina del De Architectura corrispondente, mostrata nel diario
+    // accanto/al posto dell'estratto testuale.
+    public Sprite deArchitecturaPageImage;
 }
 
 // Una voce del diario dei dialoghi: il dialogo mostrato per una milestone raggiunta, insieme
@@ -40,11 +44,13 @@ public struct DialogueLogEntry
     public string milestoneLabel;
     public DialogueLine[] dialogue;
     public string deArchitecturaExcerpt;
+    public Sprite deArchitecturaPageImage;
 
-    public DialogueLogEntry(string milestoneLabel, DialogueLine[] dialogue, string deArchitecturaExcerpt)
+    public DialogueLogEntry(string milestoneLabel, DialogueLine[] dialogue, string deArchitecturaExcerpt, Sprite deArchitecturaPageImage)
     {
         this.milestoneLabel = milestoneLabel;
         this.dialogue = dialogue;
         this.deArchitecturaExcerpt = deArchitecturaExcerpt;
+        this.deArchitecturaPageImage = deArchitecturaPageImage;
     }
 }
