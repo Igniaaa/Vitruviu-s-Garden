@@ -32,6 +32,7 @@ public class PlaceholderSlot : MonoBehaviour
 
     private Collider slotCollider;
     private Renderer[] renderers;
+    private MeshFilter slotMeshFilter;
     private readonly List<Renderer> wireframeRenderers = new List<Renderer>();
     private readonly HashSet<DraggableObject> candidates = new HashSet<DraggableObject>();
     private readonly HashSet<DraggableObject> wrongCandidates = new HashSet<DraggableObject>();
@@ -42,6 +43,10 @@ public class PlaceholderSlot : MonoBehaviour
     public bool IsUnlocked => isUnlocked;
     public string PieceId => pieceId;
     public int BuildPhase => buildPhase;
+
+    // Mesh "definitiva" di questo slot: il pezzo che ci si aggancia la adotta al posto della
+    // propria (vedi Fill/DraggableObject.LockAt), qualunque forma avesse in mano.
+    public Mesh SlotMesh => slotMeshFilter != null ? slotMeshFilter.sharedMesh : null;
 
     // Notifica (es. a un GameManager che tiene traccia del monumento) che questo slot è stato completato.
     public event Action<PlaceholderSlot> OnSlotFilled;
@@ -56,6 +61,11 @@ public class PlaceholderSlot : MonoBehaviour
         rb.useGravity = false;
 
         renderers = GetComponentsInChildren<Renderer>();
+
+        // Catturata prima di CreateWireframes(): dopo, GetComponentInChildren rischierebbe di
+        // trovare il MeshFilter del wireframe generato invece di quello della forma vera.
+        slotMeshFilter = GetComponentInChildren<MeshFilter>();
+
         ApplyColor(placeholderColor);
         CreateWireframes();
     }
@@ -228,7 +238,7 @@ public class PlaceholderSlot : MonoBehaviour
         }
         candidates.Clear();
 
-        draggable.LockAt(transform.position, transform.rotation, transform.localScale);
+        draggable.LockAt(transform.position, transform.rotation, transform.localScale, SlotMesh);
 
         foreach (Renderer r in renderers)
         {

@@ -33,6 +33,7 @@ public class DraggableObject : MonoBehaviour
     private Rigidbody rb;
     private Collider col;
     private Collider playerCollider;
+    private MeshFilter meshFilter;
     private Vector3 targetPosition;
     private Vector3 originalScale;
     private Vector3 lockedScale;
@@ -51,6 +52,7 @@ public class DraggableObject : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
+        meshFilter = GetComponentInChildren<MeshFilter>();
         originalScale = transform.localScale;
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -131,7 +133,11 @@ public class DraggableObject : MonoBehaviour
     // blocca in posizione/rotazione esatte e disattiva ulteriori trascinamenti. La scala
     // passata (quella del placeholder) diventa il nuovo target di FixedUpdate, che la
     // raggiunge con lo stesso lerp già usato per lo shrink/ripristino mentre è in mano.
-    public void LockAt(Vector3 position, Quaternion rotation, Vector3 scale)
+    // slotMesh (se assegnata) sostituisce la mesh del pezzo con quella del placeholder,
+    // a prescindere da quale fosse la sua forma originale: pensato per pezzi "generici"
+    // (es. un sacco di cemento) che una volta piazzati assumono la forma definitiva dello
+    // slot (es. un cubo).
+    public void LockAt(Vector3 position, Quaternion rotation, Vector3 scale, Mesh slotMesh)
     {
         isDragging = false;
         isLocked = true;
@@ -146,10 +152,43 @@ public class DraggableObject : MonoBehaviour
 
         transform.SetPositionAndRotation(position, rotation);
 
+        if (slotMesh != null)
+        {
+            if (meshFilter != null)
+            {
+                meshFilter.sharedMesh = slotMesh;
+            }
+
+            ApplyLockedCollider(slotMesh);
+        }
+
         if (!lockedPieces.Contains(this))
         {
             lockedPieces.Add(this);
         }
+    }
+
+    // Sostituisce il Collider del pezzo con uno che combacia con la mesh dello slot, non
+    // convesso: va bene perché a questo punto il pezzo è già kinematico (il vincolo "convex"
+    // di Unity riguarda solo i MeshCollider su Rigidbody non kinematici). Se è già un
+    // MeshCollider gli cambia solo la mesh, altrimenti lo sostituisce del tutto (es. un pezzo
+    // con BoxCollider/SphereCollider originale non può semplicemente "cambiare forma").
+    private void ApplyLockedCollider(Mesh slotMesh)
+    {
+        if (col is MeshCollider meshCollider)
+        {
+            meshCollider.sharedMesh = slotMesh;
+            return;
+        }
+
+        if (col != null)
+        {
+            Destroy(col);
+        }
+
+        MeshCollider newCollider = gameObject.AddComponent<MeshCollider>();
+        newCollider.sharedMesh = slotMesh;
+        col = newCollider;
     }
 
     // Chiamato da un PieceRespawnVolume quando il pezzo cade sotto la mappa: interrompe un
