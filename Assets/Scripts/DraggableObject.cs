@@ -24,6 +24,16 @@ public class DraggableObject : MonoBehaviour
     // con il pieceId impostato sul placeholder corrispondente).
     [SerializeField] private string pieceId;
 
+    [Header("Sblocco automatico se il pezzo resta incastrato")]
+    // Se, mentre è in mano, il pezzo resta più lontano di questa distanza dal punto che sta
+    // inseguendo (il target dettato dal "trace" del giocatore, vedi UpdateDragTarget) per
+    // almeno stuckTimeBeforeIgnoringCollision secondi, vuol dire che è probabilmente
+    // incastrato contro qualcosa e non riesce a raggiungerlo: la sua collisione con
+    // l'ambiente viene disattivata temporaneamente così può passarci attraverso, e viene
+    // riattivata non appena torna abbastanza vicino al target.
+    [SerializeField] private float stuckDistanceThreshold = 0.5f;
+    [SerializeField] private float stuckTimeBeforeIgnoringCollision = 2f;
+
     // Tutti i pezzi già agganciati a un PlaceholderSlot: usato per sospendere la collisione
     // tra il pezzo in mano e la struttura già costruita mentre viene trascinato (vedi
     // BeginDrag/EndDrag), evitando che ci si incastri contro un pezzo fermo mentre il
@@ -39,6 +49,8 @@ public class DraggableObject : MonoBehaviour
     private Vector3 lockedScale;
     private bool isDragging;
     private bool isLocked;
+    private float timeOutsideTrace;
+    private bool collisionIgnoredWhileStuck;
 
     public bool IsDragging => isDragging;
     public bool IsLocked => isLocked;
@@ -83,6 +95,8 @@ public class DraggableObject : MonoBehaviour
 
         isDragging = true;
         targetPosition = transform.position;
+        timeOutsideTrace = 0f;
+        collisionIgnoredWhileStuck = false;
 
         // Rimane non kinematico apposta: così le collisioni con l'ambiente restano attive
         // mentre viene trascinato (vedi FixedUpdate, che lo spinge per velocità verso il target
@@ -115,6 +129,16 @@ public class DraggableObject : MonoBehaviour
     public void EndDrag()
     {
         isDragging = false;
+
+        // Se il pezzo viene rilasciato mentre la collisione era ancora disattivata per lo
+        // sblocco automatico (era ancora incastrato quando il giocatore ha premuto rilascia),
+        // va ripristinata subito: altrimenti resterebbe attraversabile per sempre.
+        if (collisionIgnoredWhileStuck && col != null)
+        {
+            col.enabled = true;
+        }
+        collisionIgnoredWhileStuck = false;
+        timeOutsideTrace = 0f;
 
         if (rb != null)
         {
@@ -264,6 +288,8 @@ public class DraggableObject : MonoBehaviour
             {
                 transform.position = Vector3.Lerp(transform.position, targetPosition, t);
             }
+
+            UpdateStuckCollisionState();
         }
 
         // Rimpicciolito mentre è in mano; una volta agganciato prende la scala del
@@ -284,5 +310,38 @@ public class DraggableObject : MonoBehaviour
         }
 
         transform.localScale = Vector3.Lerp(transform.localScale, targetScale, t);
+    }
+
+    // Controlla se il pezzo è rimasto troppo lontano dal punto che sta inseguendo (fuori
+    // dal "trace" del giocatore) per troppo tempo mentre è in mano: se sì, ne disattiva
+    // temporaneamente il Collider per lasciarlo passare attraverso l'ostacolo che lo blocca,
+    // riattivandolo non appena torna abbastanza vicino al target. Mentre è disattivato il
+    // pezzo non può neanche agganciarsi a un PlaceholderSlot (il trigger ha bisogno del suo
+    // Collider): va bene, perché in quello stato non sta comunque seguendo il target vero.
+    private void UpdateStuckCollisionState()
+    {
+        Vector3 currentPosition = rb != null ? rb.position : transform.position;
+        float distanceFromTarget = Vector3.Distance(currentPosition, targetPosition);
+
+        if (distanceFromTarget > stuckDistanceThreshold)
+        {
+            timeOutsideTrace += Time.fixedDeltaTime;
+
+            if (!collisionIgnoredWhileStuck && timeOutsideTrace >= stuckTimeBeforeIgnoringCollision && col != null)
+            {
+                collisionIgnoredWhileStuck = true;
+                col.enabled = false;
+            }
+        }
+        else
+        {
+            timeOutsideTrace = 0f;
+
+            if (collisionIgnoredWhileStuck && col != null)
+            {
+                collisionIgnoredWhileStuck = false;
+                col.enabled = true;
+            }
+        }
     }
 }

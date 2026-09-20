@@ -103,6 +103,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 5ee48b214e511c940ba90a5b35850304, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 41a2ce99c543e394e81b04e79dc811a4, type: 2}
     - target: {fileID: 919132149155446097, guid: 5ee48b214e511c940ba90a5b35850304, type: 3}
       propertyPath: m_Name
       value: Fence_Vert
@@ -139,7 +143,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e147a4e72e084b149a8eed673ca036fb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.511261
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e147a4e72e084b149a8eed673ca036fb, type: 3}
       propertyPath: m_LocalPosition.y
@@ -147,7 +151,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e147a4e72e084b149a8eed673ca036fb, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.31271362
+      value: 0.296
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e147a4e72e084b149a8eed673ca036fb, type: 3}
       propertyPath: m_LocalRotation.w
@@ -181,6 +185,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: e147a4e72e084b149a8eed673ca036fb, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 41a2ce99c543e394e81b04e79dc811a4, type: 2}
     - target: {fileID: 919132149155446097, guid: e147a4e72e084b149a8eed673ca036fb, type: 3}
       propertyPath: m_Name
       value: Fence_hor

@@ -250,7 +250,8 @@ public class PlaceholderSlot : MonoBehaviour
             r.enabled = false;
         }
 
-        slotCollider.enabled = false;
+        slotCollider.isTrigger = false;
+        //slotCollider.enabled = false;
 
         OnSlotFilled?.Invoke(this);
     }
