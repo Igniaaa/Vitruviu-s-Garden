@@ -72,6 +72,7 @@ namespace StarterAssets
 #endif
 		private CharacterController _controller;
 		private GameObject _mainCamera;
+		private PlayerPieceInteractor _pieceInteractor;
 
 		private const float _threshold = 0.01f;
 
@@ -94,6 +95,8 @@ namespace StarterAssets
 			{
 				_mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
 			}
+
+			_pieceInteractor = FindAnyObjectByType<PlayerPieceInteractor>();
 		}
 
 		private void Start()
@@ -130,6 +133,11 @@ namespace StarterAssets
 				return;
 			}
 
+			if (_pieceInteractor != null && _pieceInteractor.IsRotatingHeldPiece)
+			{
+				return;
+			}
+
 			CameraRotation();
 		}
 
@@ -143,7 +151,7 @@ namespace StarterAssets
 			bool journalActive = DialogueJournalPanel.Instance != null && DialogueJournalPanel.Instance.IsJournalActive;
 			bool paused = PauseMenuController.Instance != null && PauseMenuController.Instance.IsPaused;
 
-			return journalActive || paused;
+            return journalActive || paused || ConstructionSystem.BlocksInput;
 		}
 
 		private void GroundedCheck()

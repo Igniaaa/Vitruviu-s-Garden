@@ -1,0 +1,9 @@
+[mcp_servers.ai-game-developer.tools.rql-mutate]
+approval_mode = "approve"
+
+[mcp_servers.ai-game-developer]
+enabled = true
+http_headers = { "Authorization" = "Bearer agd_pk_szkFmQvlhJBrj1ILBlsu3OzOylRIh-hI5LGrFT33GOk" }
+startup_timeout_sec = 30
+tool_timeout_sec = 300
+url = "https://ai-game.dev/mcp/p/e366e920"

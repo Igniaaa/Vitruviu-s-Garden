@@ -2,16 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// Genera dinamicamente i pezzi trascinabili (DraggableObject) di una fase costruttiva nel
-// momento in cui MonumentProgressTracker la sblocca, invece di tenerli tutti già presenti
-// in scena fin dall'inizio.
-//
-// Non modifica PlaceholderSlot.cs né MonumentProgressTracker.cs: per sapere quando una fase
-// si sblocca legge PlaceholderSlot.IsUnlocked (già pubblica) su UNO slot rappresentante di
-// quella fase — non serve un riferimento per ogni pezzo, ne basta uno per numero di fase,
-// perché MonumentProgressTracker sblocca sempre tutti gli slot della stessa fase insieme
-// (vedi UpdatePhaseLocks). Lo script raccoglie da sé quel rappresentante cercando in scena
-// tutti i PlaceholderSlot e raggruppandoli per BuildPhase.
+// Genera i pezzi trascinabili all'avvio, così quelli necessari alla prima costruzione
+// non restano bloccati in attesa che i placeholder siano già stati riempiti.
+// In alternativa, lo spawn può restare subordinato al completamento delle fasi configurate.
 //
 // Va messo su un qualunque GameObject della scena (es. lo stesso di MonumentProgressTracker).
 public class PiecePhaseSpawner : MonoBehaviour
@@ -19,8 +12,7 @@ public class PiecePhaseSpawner : MonoBehaviour
     [Serializable]
     private class PieceSpawnEntry
     {
-        [Tooltip("Numero di fase (deve combaciare col Build Phase impostato sui PlaceholderSlot " +
-                 "di quella fase, non su questo componente).")]
+        [Tooltip("Fase associata alla notifica OnPieceSpawned. Non determina più quando compare il pezzo.")]
         public int buildPhase;
 
         [Tooltip("Prefab del DraggableObject da instanziare.")]
@@ -38,6 +30,13 @@ public class PiecePhaseSpawner : MonoBehaviour
 
     [SerializeField] private List<PieceSpawnEntry> spawnEntries = new List<PieceSpawnEntry>();
 
+    [Tooltip("Genera i pezzi appena inizia la scena. Disattivalo per usare la soglia di fase qui sotto.")]
+    [SerializeField] private bool spawnAtStart = true;
+
+    [Tooltip("Se lo spawn all'avvio è disattivato, genera i pezzi quando sono stati riempiti tutti " +
+             "i placeholder fino a questa fase inclusa.")]
+    [SerializeField] private int spawnAfterBuildPhase = 1;
+
     // Nome opzionale di un SFX registrato in AudioManager (sfxList), riprodotto ogni volta
     // che un pezzo viene generato. Lascia vuoto per non riprodurre nulla.
     [SerializeField] private string spawnSfxName;
@@ -46,73 +45,76 @@ public class PiecePhaseSpawner : MonoBehaviour
     // generato: passa il numero di fase e l'istanza appena creata.
     public event Action<int, GameObject> OnPieceSpawned;
 
-    // Uno slot "rappresentante" per ciascun numero di fase, usato solo per leggere
-    // IsUnlocked: non è il pezzo che verrà piazzato lì, serve solo a capire quando quella
-    // fase è stata sbloccata.
-    private readonly Dictionary<int, PlaceholderSlot> phaseUnlockReference = new Dictionary<int, PlaceholderSlot>();
-
-    // Rimandato al primo Update invece che a Start: Unity garantisce che TUTTI gli Start()
-    // della scena (incluso quello di MonumentProgressTracker, che sblocca gli slot della
-    // fase iniziale) siano già stati eseguiti prima che parta il primo Update di chiunque,
-    // indipendentemente dall'ordine di esecuzione degli script.
     private bool initialized;
+    private bool hasSpawnedAllPieces;
+    private List<PlaceholderSlot> constructionSlots;
+
+    private void Start()
+    {
+        if (spawnAtStart)
+        {
+            SpawnAllPieces();
+        }
+    }
 
     private void Update()
     {
+        if (spawnAtStart)
+        {
+            return;
+        }
+
         if (!initialized)
         {
             initialized = true;
-            BuildPhaseUnlockReference();
+            constructionSlots = new List<PlaceholderSlot>(
+                FindObjectsByType<PlaceholderSlot>(FindObjectsSortMode.None));
+        }
 
-            foreach (PieceSpawnEntry entry in spawnEntries)
-            {
-                CheckAndSpawn(entry);
-            }
+        if (!hasSpawnedAllPieces && AreInitialConstructionPhasesComplete())
+        {
+            SpawnAllPieces();
+        }
+    }
 
+    private void SpawnAllPieces()
+    {
+        if (hasSpawnedAllPieces)
+        {
             return;
         }
 
+        hasSpawnedAllPieces = true;
         foreach (PieceSpawnEntry entry in spawnEntries)
         {
-            if (!entry.hasSpawned)
-            {
-                CheckAndSpawn(entry);
-            }
+            Spawn(entry);
         }
     }
 
-    private void BuildPhaseUnlockReference()
+    private bool AreInitialConstructionPhasesComplete()
     {
-        foreach (PlaceholderSlot slot in FindObjectsByType<PlaceholderSlot>(FindObjectsSortMode.None))
+        bool foundRequiredSlot = false;
+
+        foreach (PlaceholderSlot slot in constructionSlots)
         {
-            if (!phaseUnlockReference.ContainsKey(slot.BuildPhase))
+            if (slot.BuildPhase <= spawnAfterBuildPhase)
             {
-                phaseUnlockReference[slot.BuildPhase] = slot;
+                foundRequiredSlot = true;
+                if (!slot.IsFilled)
+                {
+                    return false;
+                }
             }
         }
-    }
 
-    private void CheckAndSpawn(PieceSpawnEntry entry)
-    {
-        if (entry.hasSpawned)
+        if (!foundRequiredSlot)
         {
-            return;
+            Debug.LogWarning("PiecePhaseSpawner: nessun PlaceholderSlot trovato nelle fasi fino alla fase " +
+                              spawnAfterBuildPhase + "; i pezzi non verranno generati.", this);
+            return false;
         }
 
-        if (!phaseUnlockReference.TryGetValue(entry.buildPhase, out PlaceholderSlot referenceSlot))
-        {
-            Debug.LogWarning("PiecePhaseSpawner: nessun PlaceholderSlot trovato in scena con BuildPhase " +
-                              entry.buildPhase + ", impossibile capire quando generare questo pezzo.", this);
-            entry.hasSpawned = true;
-            return;
-        }
-
-        if (!referenceSlot.IsUnlocked)
-        {
-            return;
-        }
-
-        Spawn(entry);
+        return true;
     }
 
     private void Spawn(PieceSpawnEntry entry)

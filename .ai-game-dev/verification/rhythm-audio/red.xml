@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="6" result="Failed(Child)" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0,6368167">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.636817" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <failure>
+      <message><![CDATA[One or more child tests had errors]]></message>
+    </failure>
+    <test-suite type="Assembly" id="1035" name="Basilica.Crafting.Tests.dll" fullname="C:/Users/aless/Documents/unity/Vitruviu-s-Garden/Library/ScriptAssemblies/Basilica.Crafting.Tests.dll" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.624013" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="11528" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <failure>
+        <message><![CDATA[One or more child tests had errors]]></message>
+      </failure>
+      <test-suite type="TestSuite" id="1036" name="Basilica" fullname="Basilica" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.622486" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <failure>
+          <message><![CDATA[One or more child tests had errors]]></message>
+        </failure>
+        <test-suite type="TestSuite" id="1037" name="Crafting" fullname="Basilica.Crafting" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.621460" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <failure>
+            <message><![CDATA[One or more child tests had errors]]></message>
+          </failure>
+          <test-suite type="TestSuite" id="1038" name="Tests" fullname="Basilica.Crafting.Tests" runstate="Runnable" testcasecount="27" result="Failed" site="Child" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.620372" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <failure>
+              <message><![CDATA[One or more child tests had errors]]></message>
+            </failure>
+            <test-suite type="TestFixture" id="1001" name="RhythmAudioTests" fullname="Basilica.Crafting.Tests.RhythmAudioTests" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" testcasecount="6" result="Failed" site="Child" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.618599" total="6" passed="0" failed="6" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <failure>
+                <message><![CDATA[One or more child tests had errors]]></message>
+              </failure>
+              <test-case id="1003" name="FirstBeatOfEachBarIsAccented" fullname="Basilica.Crafting.Tests.RhythmAudioTests.FirstBeatOfEachBarIsAccented" methodname="FirstBeatOfEachBarIsAccented" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="806408704" result="Failed" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.061026" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Expected: greater than 0.032165751122538472d
+  But was:  0.026804792602115397d
+]]></message>
+                  <stack-trace><![CDATA[at Basilica.Crafting.Tests.RhythmAudioTests.FirstBeatOfEachBarIsAccented () [0x00010] in C:\Users\aless\Documents\unity\Vitruviu-s-Garden\Assets\Tests\Construction\CraftingCoreTests.cs:65
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1004" name="MelodyCanBeMutedWithoutRemovingMetronomeOrTargetCues" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MelodyCanBeMutedWithoutRemovingMetronomeOrTargetCues" methodname="MelodyCanBeMutedWithoutRemovingMetronomeOrTargetCues" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="653008991" result="Failed" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.004850" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  The accompaniment needs its own volume control.
+  Expected: not null
+  But was:  null
+]]></message>
+                  <stack-trace><![CDATA[at Basilica.Crafting.Tests.RhythmAudioTests.MelodyCanBeMutedWithoutRemovingMetronomeOrTargetCues () [0x00010] in C:\Users\aless\Documents\unity\Vitruviu-s-Garden\Assets\Tests\Construction\CraftingCoreTests.cs:73
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-case id="1002" name="MelodyPlaysDuringPreparationBetweenMetronomeTicks" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MelodyPlaysDuringPreparationBetweenMetronomeTicks" methodname="MelodyPlaysDuringPreparationBetweenMetronomeTicks" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="1664159878" result="Failed" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.002412" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+                <failure>
+                  <message><![CDATA[  Preparation should contain a melody between the short metronome ticks.
+  Expected: greater than 0.0050000000000000001d
+  But was:  0.0d
+]]></message>
+                  <stack-trace><![CDATA[at Basilica.Crafting.Tests.RhythmAudioTests.MelodyPlaysDuringPreparationBetweenMetronomeTicks () [0x0000f] in C:\Users\aless\Documents\unity\Vitruviu-s-Garden\Assets\Tests\Construction\CraftingCoreTests.cs:57
+]]></stack-trace>
+                </failure>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1008" name="MixedSoundtrackHasNoClippedOrInvalidSamples" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" testcasecount="3" result="Failed" site="Child" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.525049" total="3" passed="0" failed="3" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <failure>
+                  <message><![CDATA[One or more child tests had errors]]></message>
+                </failure>
+                <output><![CDATA[No graphic device is available to initialize the view.
+No graphic device is available to show the window.
+No graphic device is available to initialize the view.
+]]></output>
+                <test-case id="1005" name="MixedSoundtrackHasNoClippedOrInvalidSamples(40)" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples(40)" methodname="MixedSoundtrackHasNoClippedOrInvalidSamples" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="1277494322" result="Failed" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.002671" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples (System.Double bpm) [0x00033] in C:\Users\aless\Documents\unity\Vitruviu-s-Garden\Assets\Tests\Construction\CraftingCoreTests.cs:89
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1006" name="MixedSoundtrackHasNoClippedOrInvalidSamples(100)" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples(100)" methodname="MixedSoundtrackHasNoClippedOrInvalidSamples" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="157994731" result="Failed" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.000968" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples (System.Double bpm) [0x00033] in C:\Users\aless\Documents\unity\Vitruviu-s-Garden\Assets\Tests\Construction\CraftingCoreTests.cs:89
+]]></stack-trace>
+                  </failure>
+                </test-case>
+                <test-case id="1007" name="MixedSoundtrackHasNoClippedOrInvalidSamples(180)" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples(180)" methodname="MixedSoundtrackHasNoClippedOrInvalidSamples" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="1363030936" result="Failed" start-time="2026-11-07 11:04:44Z" end-time="2026-11-07 11:04:44Z" duration="0.000536" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <failure>
+                    <message><![CDATA[  Expected: not null
+  But was:  null
+]]></message>
+                    <stack-trace><![CDATA[at Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples (System.Double bpm) [0x00033] in C:\Users\aless\Documents\unity\Vitruviu-s-Garden\Assets\Tests\Construction\CraftingCoreTests.cs:89
+]]></stack-trace>
+                  </failure>
+                  <output><![CDATA[Saving results to: C:/Users/aless/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

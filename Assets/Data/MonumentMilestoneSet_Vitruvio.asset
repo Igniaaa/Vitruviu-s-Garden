@@ -33,6 +33,7 @@ MonoBehaviour:
     - speaker: 0
       text: 'Un''opera regge su tre cose insieme: che stia in piedi, che serva, che
         sia bella. Se togli la prima, le altre due non hanno dove appoggiarsi.'
+    constructionNote: "PROSSIMA FASE — PAVIMENTO: posa le lastre sul piano interno delle fondazioni, completando una fila alla volta e mantenendo i giunti allineati. Conserva una lieve pendenza verso il canale di scolo."
     deArchitecturaExcerpt: "Libro I, cap. III. In tutte queste cose si hanno ad aver
       presenti la Fortezza, il Comodo, e la Bellezza. La Fortezza dipende dal calare
       i fondamenti fino al sodo, e fare senza avarizia esatta scelta dei materiali.
@@ -60,6 +61,7 @@ MonoBehaviour:
     - speaker: 0
       text: 'Due dita ogni dieci piedi. L''acqua non discute: se non le dai una strada,
         se la prende.'
+    constructionNote: "PROSSIMA FASE — COLONNE: colloca i fusti sui punti predisposti del pavimento. Segui gli assi delle file, mantienili verticali e conserva lo stesso intervallo tra una colonna e l'altra; completa prima un lato, poi quello opposto."
     deArchitecturaExcerpt: "Libro VII, cap. I. Comincer\xF2 primieramente dallo smalto,
       ch'\xE8 il primo tra i pulimenti, affinch\xE9 si ponga tutta la maggior cura
       ed attenzione alla sodezza. Se dunque si dovr\xE0 fare lo smalto sul pian terreno,
@@ -92,6 +94,7 @@ MonoBehaviour:
       text: "Ha le sue. Distendi braccia e piedi, punta il compasso sull'ombelico:
         il cerchio ti tocca le dita. Misura poi da terra al capo e da mano a mano:
         \xE8 un quadrato. La natura ha gi\xE0 risolto il problema. Noi lo copiamo."
+    constructionNote: "PROSSIMA FASE — CAPITELLI: centra ogni capitello sul fusto corrispondente e mantieni tutti gli appoggi alla stessa quota. Orienta foglie e volute nello stesso verso prima di passare alla trabeazione."
     deArchitecturaExcerpt: "Libro III, cap. I. Non pu\xF2 fabbrica alcuna dirsi ben
       composta, se non sia fatta con simmetria e proporzione, come l'hanno le membra
       d'un corpo umano ben formato. Il centro pure, o sia punto di mezzo del corpo
@@ -128,6 +131,7 @@ MonoBehaviour:
       text: 'Callimaco. Vide il paniere e le foglie tenere che gli crescevano intorno,
         e ne fece pietra. Un capitello nato da un giardino e da un lutto. L''architettura
         non inventa quasi mai: guarda meglio.'
+    constructionNote: "PROSSIMA FASE — TRABEAZIONE: posa i blocchi sopra i capitelli, seguendo ciascun lato. Centra gli appoggi sui capitelli sottostanti e alterna triglifi e metope a intervalli regolari, senza spostare i giunti fuori asse."
     deArchitecturaExcerpt: "Libro IV, cap. I. Il terzo ordine, che si chiama Corintio,
       imita la tenerezza delle vergini. Una vergine Corintia gi\xE0 atta a marito,
       sorpresa da male, se ne mor\xEC; la sua nutrice port\xF2 delle vivande, che
@@ -162,6 +166,7 @@ MonoBehaviour:
       text: "Copiamo la ragione per cui una forma \xE8 nata. Chi va dicendo che i
         triglifi figurino finestre non ha capito nulla: nessuno apre una finestra
         sopra il mezzo di una colonna."
+    constructionNote: "PROSSIMA FASE — FRONTONE E CORNICI: parti dai due estremi del lato corto e disponi gli elementi inclinati in modo simmetrico verso il colmo. Allinea le cornici ai bordi della trabeazione e verifica che i due spioventi combacino."
     deArchitecturaExcerpt: "Libro IV, cap. II. Gli antichi fabbricatori, poich\xE9
       ebbero situati i travi con un capo sul muro di dentro, e coll'altro sull'esterno
       tanto che sporgevano anche fuori, empirono di fabbrica lo spazio rimasto fra
@@ -194,6 +199,7 @@ MonoBehaviour:
     - speaker: 0
       text: "Parlo di proporzioni, che \xE8 la stessa cosa detta con altri strumenti.
         Per questo l'architetto deve saper di musica."
+    constructionNote: "PROSSIMA FASE — COPERTURA: disponi gli elementi su entrambi gli spioventi, procedendo dalla gronda verso il colmo e mantenendo file parallele. Lascia libero il percorso dell'acqua fino ai margini di scarico."
     deArchitecturaExcerpt: "Libro I, cap. II. L'Euritmia \xE8 il bello e grato aspetto
       cagionato dalla disposizione delle membra. Si ha, quando di dette membra corrisponde
       l'altezza con la larghezza, e la larghezza con la lunghezza, ed in somma tutte
@@ -231,6 +237,7 @@ MonoBehaviour:
       text: "Un gesto da uomini. La prima cosa che abbiamo costruito \xE8 stata un
         riparo. La prima regola dell'architettura \xE8 ancora quella: che l'opera
         serva."
+    constructionNote: "PROSSIMA FASE — INTONACI E COLORI: rifinisci le superfici asciutte per fasce regolari, poi completa raccordi e bordi senza coprire capitelli, scanalature o giunti. Usa il cinabro come accento, non sull'intera superficie."
     deArchitecturaExcerpt: "Libro II, cap. I. Gli uomini anticamente nascevano al
       pari delle fiere nelle selve, ne' boschi, e nelle spelonche, e vi menavano
       la loro vita, nutrendosi di cibi selvaggi. Frattanto in un certo luogo, da'
@@ -272,6 +279,7 @@ MonoBehaviour:
       text: "Sono un uomo che ti consegna un'opera che star\xE0 in piedi, che servir\xE0,
         e che sar\xE0 bella per le stesse ragioni per cui sta in piedi. Le tre cose
         sono una sola. Non ho mai saputo separarle."
+    constructionNote: "CONTROLLO FINALE: verifica allineamento degli elementi, continuità delle superfici e coerenza delle decorazioni. Assicurati che giunti e scoli siano liberi; correggi le irregolarità senza aggiungere dettagli privi di funzione."
     deArchitecturaExcerpt: "Libro VII, cap. V. La pittura in verit\xE0 \xE8 un'immagine
       di cosa ch'\xE8, o che pu\xF2 essere. Queste pitture pero', ch'erano dagli
       antichi copiate da cose vere, sono ora per depravato costume disusate; giacch\xE9

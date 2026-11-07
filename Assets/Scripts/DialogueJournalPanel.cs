@@ -3,9 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // Quaderno che raccoglie le voci di DialogueLog una alla volta, come una doppia pagina:
-// a sinistra il dialogo della milestone, a destra l'estratto del De Architectura e/o
-// l'immagine della pagina corrispondente (se una milestone non ha immagine assegnata,
-// lo slot resta semplicemente nascosto).
+// a sinistra il dialogo della milestone, a destra l'estratto del De Architectura,
+// l'immagine della pagina corrispondente e la nota di cantiere.
 // L'apertura/chiusura e lo scorrimento pagine passano dalle action OpenJournal,
 // NextJournalPage e PreviouseJournalPage lette tramite PlayerInputHandler (Tab, E e Q
 // nella action map "Player").
@@ -23,7 +22,9 @@ public class DialogueJournalPanel : MonoBehaviour
     [SerializeField] private TMP_Text leftPageText;
     [SerializeField] private TMP_Text rightPageText;
     [SerializeField] private Image rightPageImage;
+    [SerializeField] private TMP_Text rightPageNoteText;
     [SerializeField] private TMP_Text pageIndicatorText;
+    [SerializeField] private GameObject journalHint;
 
     private int currentPage;
 
@@ -37,12 +38,18 @@ public class DialogueJournalPanel : MonoBehaviour
         {
             panel.SetActive(false);
         }
+
+        if (journalHint != null)
+        {
+            journalHint.SetActive(false);
+        }
     }
 
     private void Update()
     {
         if (PlayerInputHandler.Instance == null)
         {
+            UpdateJournalHint();
             return;
         }
 
@@ -57,6 +64,8 @@ public class DialogueJournalPanel : MonoBehaviour
                 Open();
             }
         }
+
+        UpdateJournalHint();
 
         if (!IsJournalActive)
         {
@@ -73,6 +82,18 @@ public class DialogueJournalPanel : MonoBehaviour
         }
     }
 
+    private void UpdateJournalHint()
+    {
+        bool dialogueActive = ArchitectDialoguePanel.Instance != null && ArchitectDialoguePanel.Instance.IsDialogueActive;
+        bool paused = PauseMenuController.Instance != null && PauseMenuController.Instance.IsPaused;
+        bool shouldShow = DialogueLog.Entries.Count > 0 && !IsJournalActive && !dialogueActive && !paused && !ConstructionSystem.BlocksInput;
+
+        if (journalHint != null && journalHint.activeSelf != shouldShow)
+        {
+            journalHint.SetActive(shouldShow);
+        }
+    }
+
     private bool CanToggle()
     {
         if (IsJournalActive)
@@ -83,7 +104,7 @@ public class DialogueJournalPanel : MonoBehaviour
         bool dialogueActive = ArchitectDialoguePanel.Instance != null && ArchitectDialoguePanel.Instance.IsDialogueActive;
         bool paused = PauseMenuController.Instance != null && PauseMenuController.Instance.IsPaused;
 
-        return !dialogueActive && !paused;
+        return !dialogueActive && !paused && !ConstructionSystem.BlocksInput;
     }
 
     private void Open()
@@ -134,13 +155,18 @@ public class DialogueJournalPanel : MonoBehaviour
 
         if (leftPageText != null)
         {
-            string[] lines = new string[entry.dialogue.Length];
-            for (int i = 0; i < entry.dialogue.Length; i++)
+            int dialogueLineCount = entry.dialogue != null ? entry.dialogue.Length : 0;
+            string[] lines = new string[dialogueLineCount];
+            for (int i = 0; i < dialogueLineCount; i++)
             {
                 lines[i] = $"{entry.dialogue[i].speaker}: {entry.dialogue[i].text}";
             }
 
-            leftPageText.text = entry.milestoneLabel + "\n\n" + string.Join("\n", lines);
+            string dialogueSection = dialogueLineCount == 0
+                ? "DIALOGO\nNessun dialogo registrato."
+                : "DIALOGO\n" + string.Join("\n", lines);
+
+            leftPageText.text = entry.milestoneLabel + "\n\n" + dialogueSection;
         }
 
         if (rightPageText != null)
@@ -152,6 +178,15 @@ public class DialogueJournalPanel : MonoBehaviour
         {
             rightPageImage.sprite = entry.deArchitecturaPageImage;
             rightPageImage.gameObject.SetActive(entry.deArchitecturaPageImage != null);
+        }
+
+        if (rightPageNoteText != null)
+        {
+            bool hasConstructionNote = !string.IsNullOrWhiteSpace(entry.constructionNote);
+            rightPageNoteText.text = hasConstructionNote
+                ? "NOTE DI CANTIERE\n" + entry.constructionNote
+                : string.Empty;
+            rightPageNoteText.gameObject.SetActive(hasConstructionNote);
         }
 
         if (pageIndicatorText != null)

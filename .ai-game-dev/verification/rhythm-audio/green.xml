@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<test-run id="2" testcasecount="27" result="Passed" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0" engine-version="3.5.0.0" clr-version="4.0.30319.42000" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0,3994144">
+  <test-suite type="TestSuite" id="1000" name="My project" fullname="My project" runstate="Runnable" testcasecount="27" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.399414" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0">
+    <properties>
+      <property name="platform" value="EditMode" />
+    </properties>
+    <test-suite type="Assembly" id="1035" name="Basilica.Crafting.Tests.dll" fullname="C:/Users/aless/Documents/unity/Vitruviu-s-Garden/Library/ScriptAssemblies/Basilica.Crafting.Tests.dll" runstate="Runnable" testcasecount="27" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.380061" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0">
+      <properties>
+        <property name="_PID" value="17056" />
+        <property name="_APPDOMAIN" value="Unity Child Domain" />
+        <property name="platform" value="EditMode" />
+        <property name="EditorOnly" value="True" />
+      </properties>
+      <test-suite type="TestSuite" id="1036" name="Basilica" fullname="Basilica" runstate="Runnable" testcasecount="27" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.378271" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0">
+        <properties />
+        <test-suite type="TestSuite" id="1037" name="Crafting" fullname="Basilica.Crafting" runstate="Runnable" testcasecount="27" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.376689" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0">
+          <properties />
+          <test-suite type="TestSuite" id="1038" name="Tests" fullname="Basilica.Crafting.Tests" runstate="Runnable" testcasecount="27" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.374937" total="27" passed="27" failed="0" inconclusive="0" skipped="0" asserts="0">
+            <properties />
+            <test-suite type="TestFixture" id="1009" name="CraftingCoreTests" fullname="Basilica.Crafting.Tests.CraftingCoreTests" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" testcasecount="21" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.119594" total="21" passed="21" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1021" name="DuplicateIngredientsAreRejectedAtomically" fullname="Basilica.Crafting.Tests.CraftingCoreTests.DuplicateIngredientsAreRejectedAtomically" methodname="DuplicateIngredientsAreRejectedAtomically" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="731699093" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.038436" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1032" name="EarlyAndRepeatedPressesConsumeNotesInsteadOfRewardingSpam" fullname="Basilica.Crafting.Tests.CraftingCoreTests.EarlyAndRepeatedPressesConsumeNotesInsteadOfRewardingSpam" methodname="EarlyAndRepeatedPressesConsumeNotesInsteadOfRewardingSpam" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="318731641" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.003929" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1027" name="EightCorrectHitsArePerfectAndSixAreNormal" fullname="Basilica.Crafting.Tests.CraftingCoreTests.EightCorrectHitsArePerfectAndSixAreNormal" methodname="EightCorrectHitsArePerfectAndSixAreNormal" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="1405625268" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.005020" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1028" name="FiveHitsFailAndLateFramesCountAllMissedNotes" fullname="Basilica.Crafting.Tests.CraftingCoreTests.FiveHitsFailAndLateFramesCountAllMissedNotes" methodname="FiveHitsFailAndLateFramesCountAllMissedNotes" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="526506831" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000950" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1031" name="HitWindowIncludesBothBoundaries" fullname="Basilica.Crafting.Tests.CraftingCoreTests.HitWindowIncludesBothBoundaries" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" testcasecount="2" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.005117" total="2" passed="2" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1029" name="HitWindowIncludesBothBoundaries(-0.15d)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.HitWindowIncludesBothBoundaries(-0.15d)" methodname="HitWindowIncludesBothBoundaries" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="696156432" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000885" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1030" name="HitWindowIncludesBothBoundaries(0.15d)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.HitWindowIncludesBothBoundaries(0.15d)" methodname="HitWindowIncludesBothBoundaries" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="1315959269" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000419" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="1025" name="InvalidOrUnaffordablePurchaseLeavesWalletUntouched" fullname="Basilica.Crafting.Tests.CraftingCoreTests.InvalidOrUnaffordablePurchaseLeavesWalletUntouched" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.003205" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1022" name="InvalidOrUnaffordablePurchaseLeavesWalletUntouched(0)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.InvalidOrUnaffordablePurchaseLeavesWalletUntouched(0)" methodname="InvalidOrUnaffordablePurchaseLeavesWalletUntouched" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="1207001670" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.001019" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1023" name="InvalidOrUnaffordablePurchaseLeavesWalletUntouched(-1)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.InvalidOrUnaffordablePurchaseLeavesWalletUntouched(-1)" methodname="InvalidOrUnaffordablePurchaseLeavesWalletUntouched" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="7421390" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000407" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1024" name="InvalidOrUnaffordablePurchaseLeavesWalletUntouched(int.MaxValue)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.InvalidOrUnaffordablePurchaseLeavesWalletUntouched(int.MaxValue)" methodname="InvalidOrUnaffordablePurchaseLeavesWalletUntouched" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="592310397" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000377" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-suite type="ParameterizedMethod" id="1020" name="InvalidRecipeQuantitiesCannotReserve" fullname="Basilica.Crafting.Tests.CraftingCoreTests.InvalidRecipeQuantitiesCannotReserve" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.002998" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1017" name="InvalidRecipeQuantitiesCannotReserve(0)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.InvalidRecipeQuantitiesCannotReserve(0)" methodname="InvalidRecipeQuantitiesCannotReserve" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="212015615" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000817" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1018" name="InvalidRecipeQuantitiesCannotReserve(-2)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.InvalidRecipeQuantitiesCannotReserve(-2)" methodname="InvalidRecipeQuantitiesCannotReserve" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="1320341963" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000386" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1019" name="InvalidRecipeQuantitiesCannotReserve(3)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.InvalidRecipeQuantitiesCannotReserve(3)" methodname="InvalidRecipeQuantitiesCannotReserve" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="786268296" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000461" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+              <test-case id="1016" name="MissingOneIngredientDoesNotConsumeTheOther" fullname="Basilica.Crafting.Tests.CraftingCoreTests.MissingOneIngredientDoesNotConsumeTheOther" methodname="MissingOneIngredientDoesNotConsumeTheOther" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="1851955017" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.001266" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1033" name="PatternUsesHalfBeatGridAndNeverRepeatsPrevious" fullname="Basilica.Crafting.Tests.CraftingCoreTests.PatternUsesHalfBeatGridAndNeverRepeatsPrevious" methodname="PatternUsesHalfBeatGridAndNeverRepeatsPrevious" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="2139703100" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.012603" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1034" name="PausedClockDoesNotAdvanceJudgments" fullname="Basilica.Crafting.Tests.CraftingCoreTests.PausedClockDoesNotAdvanceJudgments" methodname="PausedClockDoesNotAdvanceJudgments" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="2011966851" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000824" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1026" name="ReservationSnapshotsCostsAgainstAssetEdits" fullname="Basilica.Crafting.Tests.CraftingCoreTests.ReservationSnapshotsCostsAgainstAssetEdits" methodname="ReservationSnapshotsCostsAgainstAssetEdits" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="87454440" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.003340" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1015" name="SettlementAndConcurrentReservationCannotDuplicateRefunds" fullname="Basilica.Crafting.Tests.CraftingCoreTests.SettlementAndConcurrentReservationCannotDuplicateRefunds" methodname="SettlementAndConcurrentReservationCannotDuplicateRefunds" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="1882574245" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000890" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1014" name="SettlementConsumesCorrectFraction" fullname="Basilica.Crafting.Tests.CraftingCoreTests.SettlementConsumesCorrectFraction" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" testcasecount="4" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.003914" total="4" passed="4" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1010" name="SettlementConsumesCorrectFraction(NormalSuccess,4,2)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.SettlementConsumesCorrectFraction(NormalSuccess,4,2)" methodname="SettlementConsumesCorrectFraction" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="1890522929" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.001020" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1011" name="SettlementConsumesCorrectFraction(PerfectSuccess,6,3)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.SettlementConsumesCorrectFraction(PerfectSuccess,6,3)" methodname="SettlementConsumesCorrectFraction" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="782103726" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000427" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1012" name="SettlementConsumesCorrectFraction(Failure,6,3)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.SettlementConsumesCorrectFraction(Failure,6,3)" methodname="SettlementConsumesCorrectFraction" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="838913861" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000413" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1013" name="SettlementConsumesCorrectFraction(TechnicalAbort,8,4)" fullname="Basilica.Crafting.Tests.CraftingCoreTests.SettlementConsumesCorrectFraction(TechnicalAbort,8,4)" methodname="SettlementConsumesCorrectFraction" classname="Basilica.Crafting.Tests.CraftingCoreTests" runstate="Runnable" seed="1393711420" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.000420" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+              </test-suite>
+            </test-suite>
+            <test-suite type="TestFixture" id="1001" name="RhythmAudioTests" fullname="Basilica.Crafting.Tests.RhythmAudioTests" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" testcasecount="6" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.252222" total="6" passed="6" failed="0" inconclusive="0" skipped="0" asserts="0">
+              <properties />
+              <test-case id="1003" name="FirstBeatOfEachBarIsAccented" fullname="Basilica.Crafting.Tests.RhythmAudioTests.FirstBeatOfEachBarIsAccented" methodname="FirstBeatOfEachBarIsAccented" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="101485172" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.057188" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1004" name="MelodyCanBeMutedWithoutRemovingMetronomeOrTargetCues" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MelodyCanBeMutedWithoutRemovingMetronomeOrTargetCues" methodname="MelodyCanBeMutedWithoutRemovingMetronomeOrTargetCues" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="416688098" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.019343" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-case id="1002" name="MelodyPlaysDuringPreparationBetweenMetronomeTicks" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MelodyPlaysDuringPreparationBetweenMetronomeTicks" methodname="MelodyPlaysDuringPreparationBetweenMetronomeTicks" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="2017744281" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.032905" asserts="0">
+                <properties>
+                  <property name="retryIteration" value="0" />
+                  <property name="repeatIteration" value="0" />
+                </properties>
+              </test-case>
+              <test-suite type="ParameterizedMethod" id="1008" name="MixedSoundtrackHasNoClippedOrInvalidSamples" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" testcasecount="3" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.139526" total="3" passed="3" failed="0" inconclusive="0" skipped="0" asserts="0">
+                <properties />
+                <test-case id="1005" name="MixedSoundtrackHasNoClippedOrInvalidSamples(40)" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples(40)" methodname="MixedSoundtrackHasNoClippedOrInvalidSamples" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="1313050155" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.033183" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1006" name="MixedSoundtrackHasNoClippedOrInvalidSamples(100)" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples(100)" methodname="MixedSoundtrackHasNoClippedOrInvalidSamples" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="1818254428" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.049190" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                </test-case>
+                <test-case id="1007" name="MixedSoundtrackHasNoClippedOrInvalidSamples(180)" fullname="Basilica.Crafting.Tests.RhythmAudioTests.MixedSoundtrackHasNoClippedOrInvalidSamples(180)" methodname="MixedSoundtrackHasNoClippedOrInvalidSamples" classname="Basilica.Crafting.Tests.RhythmAudioTests" runstate="Runnable" seed="1129582676" result="Passed" start-time="2026-11-07 11:06:13Z" end-time="2026-11-07 11:06:13Z" duration="0.046858" asserts="0">
+                  <properties>
+                    <property name="retryIteration" value="0" />
+                    <property name="repeatIteration" value="0" />
+                  </properties>
+                  <output><![CDATA[Saving results to: C:/Users/aless/AppData/LocalLow/DefaultCompany/My project\TestResults.xml
+]]></output>
+                </test-case>
+              </test-suite>
+            </test-suite>
+          </test-suite>
+        </test-suite>
+      </test-suite>
+    </test-suite>
+  </test-suite>
+</test-run>

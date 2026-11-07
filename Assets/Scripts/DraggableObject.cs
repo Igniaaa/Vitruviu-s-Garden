@@ -124,6 +124,29 @@ public class DraggableObject : MonoBehaviour
         targetPosition = worldPosition;
     }
 
+    // Ruota manualmente il pezzo mentre è in mano. La rotazione del Rigidbody viene
+    // impostata direttamente perché durante il trascinamento la rotazione fisica è congelata.
+    public void RotateWhileHeld(Transform viewTransform, Vector2 mouseDelta, float sensitivity)
+    {
+        if (!isDragging || viewTransform == null || mouseDelta.sqrMagnitude <= 0f)
+        {
+            return;
+        }
+
+        Quaternion yaw = Quaternion.AngleAxis(mouseDelta.x * sensitivity, Vector3.up);
+        Quaternion pitch = Quaternion.AngleAxis(-mouseDelta.y * sensitivity, viewTransform.right);
+        Quaternion rotated = pitch * yaw * (rb != null ? rb.rotation : transform.rotation);
+
+        if (rb != null)
+        {
+            rb.rotation = rotated;
+        }
+        else
+        {
+            transform.rotation = rotated;
+        }
+    }
+
     // Chiamato dal PlayerPieceInteractor quando il giocatore rilascia il pezzo: inerziale,
     // mantiene la velocità con cui lo stava inseguendo mentre era in mano (vedi FixedUpdate).
     public void EndDrag()

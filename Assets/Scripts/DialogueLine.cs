@@ -26,6 +26,9 @@ public struct Milestone
     public int piecesRequired;
     public DialogueLine[] dialogue;
 
+    // Nota pratica di cantiere mostrata nel taccuino accanto al dialogo della milestone.
+    [TextArea(2, 5)] public string constructionNote;
+
     // Estratto del De Architectura legato a questa milestone, mostrato insieme al dialogo
     // nella schermata del diario.
     [TextArea(2, 6)] public string deArchitecturaExcerpt;
@@ -42,13 +45,15 @@ public struct Milestone
 public struct DialogueLogEntry
 {
     public string milestoneLabel;
+    public string constructionNote;
     public DialogueLine[] dialogue;
     public string deArchitecturaExcerpt;
     public Sprite deArchitecturaPageImage;
 
-    public DialogueLogEntry(string milestoneLabel, DialogueLine[] dialogue, string deArchitecturaExcerpt, Sprite deArchitecturaPageImage)
+    public DialogueLogEntry(string milestoneLabel, string constructionNote, DialogueLine[] dialogue, string deArchitecturaExcerpt, Sprite deArchitecturaPageImage)
     {
         this.milestoneLabel = milestoneLabel;
+        this.constructionNote = constructionNote;
         this.dialogue = dialogue;
         this.deArchitecturaExcerpt = deArchitecturaExcerpt;
         this.deArchitecturaPageImage = deArchitecturaPageImage;

@@ -1,0 +1,6 @@
+{
+  "name": "Basilica.Crafting.Tests",
+  "references": ["Basilica.Crafting.Core"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

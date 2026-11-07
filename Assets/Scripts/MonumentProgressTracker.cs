@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +22,10 @@ public class MonumentProgressTracker : MonoBehaviour
     private readonly Dictionary<int, List<PlaceholderSlot>> slotsByPhase = new Dictionary<int, List<PlaceholderSlot>>();
     private int currentPhase;
     private int maxPhase;
+
+    public bool IsReconstructionComplete { get; private set; }
+    public int CurrentPhase => currentPhase;
+    public event Action OnReconstructionCompleted;
 
     private void Start()
     {
@@ -78,6 +83,12 @@ public class MonumentProgressTracker : MonoBehaviour
         }
 
         UpdatePhaseLocks();
+
+        if (!IsReconstructionComplete && slotsByPhase.Count > 0 && currentPhase > maxPhase)
+        {
+            IsReconstructionComplete = true;
+            OnReconstructionCompleted?.Invoke();
+        }
     }
 
     private bool IsPhaseComplete(int phase)

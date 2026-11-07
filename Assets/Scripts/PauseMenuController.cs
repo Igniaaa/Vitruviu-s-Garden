@@ -73,6 +73,7 @@ public class PauseMenuController : MonoBehaviour
     {
         IsPaused = true;
         Time.timeScale = 0f;
+        ConstructionSystem.Instance?.RefreshPauseState();
 
         if (pausePanel != null)
         {
@@ -102,6 +103,7 @@ public class PauseMenuController : MonoBehaviour
     {
         IsPaused = false;
         Time.timeScale = 1f;
+        ConstructionSystem.Instance?.RefreshPauseState();
 
         if (pausePanel != null)
         {
@@ -113,8 +115,8 @@ public class PauseMenuController : MonoBehaviour
             settingsPanel.SetActive(false);
         }
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        Cursor.lockState = ConstructionSystem.BlocksInput ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = ConstructionSystem.BlocksInput;
     }
 
     public void OpenSettings()

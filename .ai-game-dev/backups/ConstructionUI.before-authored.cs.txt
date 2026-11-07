@@ -1,0 +1,340 @@
+using System;
+using System.Linq;
+using Basilica.Crafting;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+// Built from uGUI so the same layout works at every Game View resolution without scene-only wiring.
+public sealed class ConstructionUI : MonoBehaviour
+{
+    private static readonly Color Ink = new Color(.065f, .085f, .09f);
+    private static readonly Color Paper = new Color(.94f, .91f, .82f);
+    private static readonly Color Gold = new Color(.91f, .68f, .32f);
+    private static readonly Color Muted = new Color(.64f, .7f, .68f);
+    private static readonly Color Green = new Color(.36f, .81f, .64f);
+    private static readonly Color Red = new Color(.95f, .4f, .34f);
+    private ConstructionSystem system;
+    private TMP_FontAsset font;
+    private GameObject root;
+    private RectTransform panel, viewport, content, lane, stripe;
+    private TMP_Text brand, title, summary, message, instructions, score;
+    private Image[] notes, tally;
+    private CraftingRecipe rhythmRecipe;
+    private Button closeButton;
+    private bool visible;
+    private bool suspended;
+    private Button storageButton;
+
+    public void Initialize(ConstructionSystem owner, TMP_FontAsset fontAsset)
+    {
+        system = owner;
+        font = fontAsset != null ? fontAsset : TMP_Settings.defaultFontAsset;
+        var canvas = gameObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 30;
+        var scaler = gameObject.AddComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920, 1080);
+        scaler.matchWidthOrHeight = .5f;
+        gameObject.AddComponent<GraphicRaycaster>();
+        var overlay = Box("Overlay", transform, new Color(.01f, .02f, .02f, .75f));
+        root = overlay.gameObject;
+        overlay.rectTransform.anchorMin = Vector2.zero;
+        overlay.rectTransform.anchorMax = Vector2.one;
+        overlay.rectTransform.offsetMin = overlay.rectTransform.offsetMax = Vector2.zero;
+        panel = Box("Panel", root.transform, Ink).rectTransform;
+        Place(panel, 0, 0, 1120, 780, new Vector2(.5f, .5f), new Vector2(.5f, .5f));
+        stripe = Box("Gold rule", panel, Gold).rectTransform;
+        Place(stripe, 0, 0, 1120, 5);
+        brand = Label("CANTIERE DELLA BASILICA", panel, 44, -34, 1000, 28, 18, Gold);
+        title = Label("", panel, 44, -80, 1000, 62, 46, Paper);
+        summary = Label("", panel, 44, -153, 1000, 72, 23, Muted);
+        viewport = Box("Viewport", panel, Color.clear).rectTransform;
+        Place(viewport, 44, -243, 1032, 310);
+        viewport.gameObject.AddComponent<RectMask2D>();
+        content = Rect("Content", viewport);
+        Place(content, 0, 0, 1032, 310);
+        var scroll = viewport.gameObject.AddComponent<ScrollRect>();
+        scroll.viewport = viewport;
+        scroll.content = content;
+        scroll.horizontal = false;
+        scroll.movementType = ScrollRect.MovementType.Clamped;
+        scroll.scrollSensitivity = 28;
+        message = Label("", panel, 44, -565, 1000, 82, 21, Gold);
+        instructions = Label("", panel, 44, -665, 760, 73, 18, Muted);
+        closeButton = Button("CHIUDI  [E]", panel, 850, -686, 226, 52, () => system.Close());
+        Hide();
+    }
+
+    private void Header(string heading, string subtitle, string footer)
+    {
+        storageButton = null;
+        SetResultLayout(false);
+        visible = true;
+        root.SetActive(!suspended);
+        title.text = heading;
+        summary.text = subtitle;
+        message.text = system.Message ?? "";
+        instructions.text = footer;
+        closeButton.gameObject.SetActive(true);
+        foreach (Transform child in content)
+        { child.gameObject.SetActive(false); Destroy(child.gameObject); }
+        content.anchoredPosition = Vector2.zero;
+        content.sizeDelta = new Vector2(1032, 310);
+        lane = null;
+    }
+
+    public void ShowShop()
+    {
+        Header("Il mercante dei materiali", "Credito di cantiere: " + system.Inventory.Coins + " monete\nAcquista le risorse, poi lavorale al banco.",
+            "Pietra e calce restano nell'inventario.\nIl costo viene mostrato su ogni acquisto.");
+        int row = 0;
+        foreach (var material in system.Materials.Where(m => m != null))
+        {
+            var item = material;
+            float y = -row++ * 126;
+            var card = Card(y, 112);
+            Label(item.displayName, card, 22, -16, 420, 39, 29, Paper);
+            Label("Posseduti: " + system.Inventory.Count(item) + "    |    " + item.unitPrice + " monete / unità", card, 22, -61, 450, 32, 20, Muted);
+            int[] amounts = { 1, 5, 10 };
+            for (int j = 0; j < amounts.Length; j++)
+            {
+                int quantity = amounts[j];
+                var button = Button("+" + quantity + "  /  " + (long)quantity * item.unitPrice + " m", card,
+                    498 + j * 164, -31, 152, 52, () => system.Buy(item, quantity));
+                button.interactable = item.unitPrice > 0 && (long)quantity * item.unitPrice <= system.Inventory.Coins;
+            }
+        }
+        content.sizeDelta = new Vector2(1032, Mathf.Max(310, row * 126));
+    }
+
+    public void ShowWorkbench()
+    {
+        Header("Banco da lavoro", "Fase costruttiva: " + (system.CurrentPhase + 1) + "    |    Credito: " + system.Inventory.Coins + " monete\nScegli il pezzo da creare con i materiali acquistati.",
+            "Riuscita: costo intero. Perfetto: metà costo.\nFallimento o annullamento: restituisce metà dei materiali.");
+        int row = 0;
+        foreach (var recipe in system.Recipes.Where(r => r != null))
+        {
+            var item = recipe;
+            float y = -row++ * 148;
+            var card = Card(y, 134);
+            Label(item.displayName + "  ·  fase " + (item.buildPhase + 1), card, 22, -12, 690, 38, 27, Paper);
+            string cost = item.costs == null ? "Ricetta non configurata" : string.Join("    ", item.costs.Select(c =>
+                c.material != null ? c.material.displayName + " " + system.Inventory.Count(c.material) + "/" + c.quantity : "Materiale mancante"));
+            Label(cost, card, 22, -53, 690, 31, 21, Muted);
+            bool can = system.CanCraft(item, out string reason);
+            Label(can ? "Ancora da produrre: " + system.Remaining(item) : reason, card, 22, -90, 720, 30, 18, can ? Green : Gold);
+            var button = Button("CREA  " + item.minimumHits + "/" + item.noteCount, card, 790, -40, 218, 58, () => system.BeginCraft(item));
+            button.interactable = can;
+        }
+        content.sizeDelta = new Vector2(1032, Mathf.Max(310, row * 148));
+    }
+
+    public void ShowRhythm(CraftingRecipe recipe, RhythmSequence sequence)
+    {
+        rhythmRecipe = recipe;
+        Header("Al ritmo del cantiere", recipe.displayName + "    |    " + recipe.bpm + " BPM\nPremi SPAZIO quando una nota attraversa la linea dorata.",
+            "Premere in anticipo fa perdere la nota.\nESC mette in pausa, senza penalità.");
+        closeButton.gameObject.SetActive(false);
+        message.text = "Perfetto: tutte le note corrette. Riuscita: almeno " + recipe.minimumHits + " su " + recipe.noteCount + ".";
+        score = Label("Preparati…", content, 0, -4, 1032, 44, 27, Gold);
+        lane = Box("Rhythm lane", content, new Color(.11f, .15f, .16f)).rectTransform;
+        Place(lane, 0, -70, 1032, 130);
+        lane.gameObject.AddComponent<RectMask2D>();
+        var window = Box("Hit window", lane, new Color(Gold.r, Gold.g, Gold.b, .16f)).rectTransform;
+        Place(window, 200 - recipe.hitWindow * 220, -8, recipe.hitWindow * 440, 114);
+        var target = Box("Hit line", lane, Gold).rectTransform;
+        Place(target, 199, -8, 3, 114);
+        notes = new Image[sequence.NoteTimes.Length];
+        tally = new Image[notes.Length];
+        for (int i = 0; i < notes.Length; i++)
+        {
+            notes[i] = Box("Note " + (i + 1), lane, Paper);
+            Place(notes[i].rectTransform, 0, -45, 28, 40);
+            tally[i] = Box("Judgment " + (i + 1), content, new Color(.24f, .28f, .28f));
+            Place(tally[i].rectTransform, i * Mathf.Min(46, 900f / notes.Length), -223, 26, 16);
+        }
+        Button("ANNULLA  ·  rimborso 50%", content, 658, -246, 374, 52, () => system.CancelCraft());
+        UpdateRhythm(sequence, -.15);
+    }
+
+    public void UpdateRhythm(RhythmSequence sequence, double elapsed)
+    {
+        if (lane == null || sequence == null || score == null) return;
+        score.text = elapsed < 0 ? "Preparati…" : elapsed < sequence.NoteTimes[0] - rhythmRecipe.hitWindow
+            ? "Preparati  ·  " + Mathf.CeilToInt((float)(sequence.NoteTimes[0] - elapsed))
+            : "Corretti: " + sequence.Hits + " / " + sequence.NoteTimes.Length + "    Errori: " + sequence.Errors;
+        for (int i = 0; i < notes.Length; i++)
+        {
+            notes[i].gameObject.SetActive(sequence.Judgments[i] == 0);
+            notes[i].rectTransform.anchoredPosition = new Vector2(186 + (float)(sequence.NoteTimes[i] - elapsed) * 220, -45);
+            tally[i].color = sequence.Judgments[i] > 0 ? Green : sequence.Judgments[i] < 0 ? Red : Muted;
+        }
+    }
+
+    public void ShowResult(CraftOutcome outcome, int hits, int total, DraggableObject piece = null)
+    {
+        string heading = outcome == CraftOutcome.PerfectSuccess ? "Lavorazione perfetta" :
+            outcome == CraftOutcome.NormalSuccess ? "Pezzo completato" :
+            outcome == CraftOutcome.TechnicalAbort ? "Lavorazione interrotta" : "Lavorazione non riuscita";
+        Header(heading, "Note corrette: " + hits + " / " + total + "    |    Credito: " + system.Inventory.Coins + " monete",
+            "Chiudi il banco per tornare al cantiere.");
+        bool succeeded = (outcome == CraftOutcome.NormalSuccess || outcome == CraftOutcome.PerfectSuccess) && piece != null;
+        if (succeeded)
+        {
+            SetResultLayout(true);
+            var detail = Label(system.Message, content, 0, 0, 544, 124, 20, Paper);
+            SetResultTextOutline(detail, true);
+            storageButton = Button("SPOSTA NEL RECINTO", panel, 252, -394, 320, 48,
+                () => system.StoreCreatedPiece());
+            storageButton.interactable = system.CanStoreCreatedPiece;
+            instructions.text = "Chiudi per lasciare il pezzo sul tavolo e ritirarlo a mano,\noppure spostalo nel recinto per liberare il banco.";
+            message.text = "";
+            return;
+        }
+        Label(outcome == CraftOutcome.PerfectSuccess ? "50% DI MATERIALI RISPARMIATI" :
+            outcome == CraftOutcome.NormalSuccess ? "IL PEZZO È PRONTO" : "MATERIALI RIMBORSATI", content,
+            0, -10, 1032, 48, 31, outcome == CraftOutcome.Failure ? Red : Green);
+        Label(system.Message, content, 0, -82, 1000, 152, 25, Paper);
+        message.text = "";
+        Button("TORNA AL BANCO", content, 0, -246, 330, 52, () => system.ShowMenu());
+    }
+
+    private void SetResultLayout(bool completed)
+    {
+        // A completed piece stays visible in the world through the UI, with no picture
+        // or extra camera. Keep its controls at the edge instead of over the crosshair.
+        root.GetComponent<Image>().color = completed ? Color.clear : new Color(.01f, .02f, .02f, .75f);
+        panel.GetComponent<Image>().color = completed ? new Color(Ink.r, Ink.g, Ink.b, .18f) : Ink;
+        if (completed)
+        {
+            Place(panel, -32, 32, 600, 466, new Vector2(1, 0), new Vector2(1, 0));
+            Place(stripe, 0, 0, 600, 4);
+            Place(brand.rectTransform, 28, -24, 544, 26);
+            Place(title.rectTransform, 28, -62, 544, 48);
+            Place(summary.rectTransform, 28, -122, 544, 56);
+            Place(viewport, 28, -190, 544, 124);
+            content.sizeDelta = new Vector2(544, 124);
+            Place(instructions.rectTransform, 28, -330, 544, 52);
+            Place(closeButton.GetComponent<RectTransform>(), 28, -394, 210, 48);
+        }
+        else
+        {
+            // Result actions live outside the scroll content; discard them on any menu change.
+            foreach (Transform child in panel)
+                if (child.name == "SPOSTA NEL RECINTO") { child.gameObject.SetActive(false); Destroy(child.gameObject); }
+            Place(panel, 0, 0, 1120, 780, new Vector2(.5f, .5f), new Vector2(.5f, .5f));
+            Place(stripe, 0, 0, 1120, 5);
+            Place(brand.rectTransform, 44, -34, 1000, 28);
+            Place(title.rectTransform, 44, -80, 1000, 62);
+            Place(summary.rectTransform, 44, -153, 1000, 72);
+            Place(viewport, 44, -243, 1032, 310);
+            Place(instructions.rectTransform, 44, -665, 760, 73);
+            Place(closeButton.GetComponent<RectTransform>(), 850, -686, 226, 52);
+        }
+        title.fontSize = completed ? 34 : 46;
+        summary.fontSize = completed ? 20 : 23;
+        instructions.fontSize = completed ? 17 : 18;
+        summary.color = completed ? Paper : Muted;
+        instructions.color = completed ? Paper : Muted;
+        foreach (var text in new[] { brand, title, summary, instructions }) SetResultTextOutline(text, completed);
+    }
+
+    private static void SetResultTextOutline(TMP_Text text, bool enabled)
+    {
+        text.outlineColor = new Color(0, 0, 0, .9f);
+        text.outlineWidth = enabled ? .18f : 0;
+        var material = text.fontMaterial;
+        if (enabled)
+        {
+            material.EnableKeyword("OUTLINE_ON");
+            material.EnableKeyword("UNDERLAY_ON");
+            material.SetColor("_UnderlayColor", new Color(0, 0, 0, .9f));
+            material.SetFloat("_UnderlayOffsetX", .5f);
+            material.SetFloat("_UnderlayOffsetY", -.5f);
+            material.SetFloat("_UnderlayDilate", .15f);
+            material.SetFloat("_UnderlaySoftness", .15f);
+        }
+        else
+        {
+            material.DisableKeyword("OUTLINE_ON");
+            material.DisableKeyword("UNDERLAY_ON");
+        }
+        text.UpdateMeshPadding();
+    }
+
+    private void LateUpdate()
+    {
+        if (storageButton != null && visible && !suspended) storageButton.interactable = system.CanStoreCreatedPiece;
+    }
+
+    public void SetSuspended(bool value)
+    {
+        suspended = value;
+        if (root != null) root.SetActive(visible && !suspended);
+    }
+
+    public void Hide() { visible = false; if (root != null) root.SetActive(false); }
+
+    private RectTransform Card(float y, float height)
+    {
+        var card = Box("Item", content, new Color(.12f, .16f, .17f)).rectTransform;
+        Place(card, 0, y, 1032, height);
+        return card;
+    }
+
+    private RectTransform Rect(string name, Transform parent)
+    {
+        var go = new GameObject(name, typeof(RectTransform));
+        go.transform.SetParent(parent, false);
+        return (RectTransform)go.transform;
+    }
+
+    private Image Box(string name, Transform parent, Color color)
+    {
+        var rect = Rect(name, parent);
+        var image = rect.gameObject.AddComponent<Image>();
+        image.color = color;
+        return image;
+    }
+
+    private TMP_Text Label(string text, Transform parent, float x, float y, float width, float height, float size, Color color)
+    {
+        var rect = Rect("Text", parent);
+        Place(rect, x, y, width, height);
+        var label = rect.gameObject.AddComponent<TextMeshProUGUI>();
+        label.font = font;
+        label.text = text;
+        label.fontSize = size;
+        label.color = color;
+        label.raycastTarget = false;
+        label.textWrappingMode = TextWrappingModes.Normal;
+        return label;
+    }
+
+    private Button Button(string text, Transform parent, float x, float y, float width, float height, Action action)
+    {
+        var image = Box(text, parent, Gold);
+        Place(image.rectTransform, x, y, width, height);
+        var button = image.gameObject.AddComponent<Button>();
+        button.targetGraphic = image;
+        var colors = button.colors;
+        colors.highlightedColor = new Color(1, .92f, .72f);
+        colors.disabledColor = new Color(.4f, .43f, .42f, .6f);
+        button.colors = colors;
+        button.onClick.AddListener(() => action());
+        var label = Label(text, image.transform, 8, 0, width - 16, height, 19, Ink);
+        label.alignment = TextAlignmentOptions.Center;
+        return button;
+    }
+
+    private static void Place(RectTransform rect, float x, float y, float width, float height,
+        Vector2? anchor = null, Vector2? pivot = null)
+    {
+        rect.anchorMin = rect.anchorMax = anchor ?? new Vector2(0, 1);
+        rect.pivot = pivot ?? new Vector2(0, 1);
+        rect.anchoredPosition = new Vector2(x, y);
+        rect.sizeDelta = new Vector2(width, height);
+    }
+}

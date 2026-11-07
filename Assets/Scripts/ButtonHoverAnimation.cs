@@ -22,11 +22,13 @@ public class ButtonHoverAnimation : MonoBehaviour, IPointerEnterHandler, IPointe
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        AudioManager.Instance.PlayUISFX("buttonpop");
         currentTween?.Kill();
         // SetUpdate(true) = tempo non scalato: senza, il tween resta fermo quando il menu
         // di pausa è aperto (Time.timeScale a 0 azzera anche l'avanzamento di DOTween).
         currentTween = transform.DOScale(originalScale * hoverScale, duration).SetEase(ease).SetUpdate(true);
+
+        // L'audio è facoltativo: il menu o la scena possono essere usati senza AudioManager.
+        AudioManager.Instance?.PlayUISFX("buttonpop");
     }
 
     public void OnPointerExit(PointerEventData eventData)
