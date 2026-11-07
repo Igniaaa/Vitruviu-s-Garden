@@ -1,0 +1,14 @@
+Unity MCP verification - 2026-11-07
+EditMode Basilica.Crafting.Tests: 48 passed, 0 failed, 0 skipped.
+PlayMode via script-execute:
+- Merchant Open true; Buy 8 wood and 4 iron true; wallet 200 -> 168.
+- Map open true; point buttons selected; two installations; repeated install ignored.
+- Remaining wood 0 and iron 0; wallet 168; third install disabled.
+- Automatic cycles: wallet 168 -> 178 -> 188 (two machines, 5 each).
+- Pause: wallet and elapsed timer unchanged; Resume cursor None.
+- Actual EventSystem raycast: first hit matches point button.
+- Close: BlocksInput false; cursor Locked; production continued 188 -> 208.
+- Fresh session: map open/close then merchant Open true; wood purchase via row callback true.
+- Screenshots inspected: map.png and shop.png. Shop list scrolls to lower materials.
+- Scene saved outside Play; console Exception count 0.
+Scope: session-only state, no offline production, UI representation of machines.

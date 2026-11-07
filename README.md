@@ -14,6 +14,7 @@ Questa documentazione è in italiano e parte dalle basi. Descrive il codice e i 
 | Cambiare prezzi, pezzi, dialoghi, comandi o interfaccia | [Modifiche passo per passo](docs/modifiche-e-problemi.md) |
 | Risolvere un problema o verificare una modifica | [Problemi e verifiche](docs/modifiche-e-problemi.md#problemi-frequenti) |
 | Leggere la guida breve del sistema di creazione | [Acquisto e creazione dei pezzi](docs/construction-crafting.md) |
+| Usare o modificare la mappa, i materiali e le macchine che producono monete | [Punti di estrazione](docs/estrazione.md) |
 
 Se è la prima volta che apri il progetto, segui i primi tre documenti nell'ordine della tabella.
 

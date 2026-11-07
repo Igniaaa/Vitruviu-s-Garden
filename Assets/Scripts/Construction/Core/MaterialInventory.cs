@@ -20,6 +20,25 @@ namespace Basilica.Crafting
 
         public int Count(MaterialDefinition material) => material != null && stock.TryGetValue(material, out var n) ? n : 0;
 
+        public bool TrySpend(MaterialCost[] costs, out string error)
+        {
+            error = null;
+            if (busy || costs == null || costs.Length == 0) { error = "Materiali non disponibili durante una lavorazione."; return false; }
+            var seen = new HashSet<MaterialDefinition>();
+            foreach (var cost in costs)
+                if (cost.material == null || cost.quantity <= 0 || !seen.Add(cost.material) || Count(cost.material) < cost.quantity)
+                { error = "Materiali insufficienti o costo non valido."; return false; }
+            foreach (var cost in costs) stock[cost.material] = Count(cost.material) - cost.quantity;
+            return true;
+        }
+
+        public bool TryCredit(int amount)
+        {
+            if (amount <= 0 || (long)Coins + amount > int.MaxValue) return false;
+            Coins += amount;
+            return true;
+        }
+
         public bool TryBuy(MaterialDefinition material, int quantity, out string error)
         {
             error = null;

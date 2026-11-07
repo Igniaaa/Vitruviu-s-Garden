@@ -20,6 +20,8 @@ Canvas
               Pietra                  ConstructionMaterialRow
                 Compra 1 / Compra 5 / Compra 10
               Calce                   ConstructionMaterialRow
+              Legno                   ConstructionMaterialRow
+              Ferro                   ConstructionMaterialRow
           CHIUDI [E]
       Ricette
         Panel

@@ -189,8 +189,9 @@ public static class ConstructionUIEditorSetup
             close = Button("CHIUDI [E]", "CHIUDI  [E]", panel, 28, -394, 210, 48) };
     }
 
-    private static void MaterialRow(Transform parent, MaterialDefinition material)
+    public static void MaterialRow(Transform parent, MaterialDefinition material)
     {
+        if(font == null) font = TMP_Settings.defaultFontAsset;
         var card = Box(material.displayName, parent, new Color(.12f, .16f, .17f)).rectTransform;
         Place(card, 0, 0, 1032, 112);
         var row = card.gameObject.AddComponent<ConstructionMaterialRow>();

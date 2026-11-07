@@ -11,7 +11,7 @@ using UnityEngine.InputSystem;
 public sealed class ConstructionSystem : MonoBehaviour
 {
     public static ConstructionSystem Instance { get; private set; }
-    public static bool BlocksInput => Instance != null && Instance.IsOpen;
+    public static bool BlocksInput => Instance != null && Instance.IsOpen || ExtractionMapSystem.IsMapOpen;
     public static int InteractionConsumedFrame { get; private set; } = -1;
     [SerializeField, Min(0)] private int startingCoins = 200;
     [SerializeField] private MaterialDefinition[] materials = Array.Empty<MaterialDefinition>();
@@ -114,7 +114,7 @@ public sealed class ConstructionSystem : MonoBehaviour
 
     public bool Open(ConstructionStation target)
     {
-        if (!isActiveAndEnabled || view == null || !view.isActiveAndEnabled || target == null || !target.isActiveAndEnabled || IsOpen || Paused ||
+        if (ExtractionMapSystem.IsMapOpen || !isActiveAndEnabled || view == null || !view.isActiveAndEnabled || target == null || !target.isActiveAndEnabled || IsOpen || Paused ||
             InteractionConsumedFrame == Time.frameCount ||
             ArchitectDialoguePanel.Instance != null && ArchitectDialoguePanel.Instance.IsDialogueActive ||
             DialogueJournalPanel.Instance != null && DialogueJournalPanel.Instance.IsJournalActive ||

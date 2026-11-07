@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 462ded1f733a85a459b615b10fd124af, type: 3}
+  m_Name: MacchinaVitruvio
+  m_EditorClassIdentifier: Assembly-CSharp::ExtractionMachineDefinition
+  displayName: Macchina estrattrice di Vitruvio
+  costs:
+  - material: {fileID: 11400000, guid: e0ce5a7fec351514d85e9f3ebd28cf29, type: 2}
+    quantity: 4
+  - material: {fileID: 11400000, guid: 6f00d74eee632de4b8d14019ba102c69, type: 2}
+    quantity: 2
+  coinsPerCycle: 5
+  cycleSeconds: 10
