@@ -15,6 +15,7 @@ Questa documentazione è in italiano e parte dalle basi. Descrive il codice e i 
 | Risolvere un problema o verificare una modifica | [Problemi e verifiche](docs/modifiche-e-problemi.md#problemi-frequenti) |
 | Leggere la guida breve del sistema di creazione | [Acquisto e creazione dei pezzi](docs/construction-crafting.md) |
 | Usare o modificare la mappa, i materiali e le macchine che producono monete | [Punti di estrazione](docs/estrazione.md) |
+| Modificare i placeholder e le dieci fasi della basilica | [Ricostruzione della basilica](docs/ricostruzione-basilica.md) |
 
 Se è la prima volta che apri il progetto, segui i primi tre documenti nell'ordine della tabella.
 
@@ -27,7 +28,7 @@ Se è la prima volta che apri il progetto, segui i primi tre documenti nell'ordi
 5. Premi **Play**, poi clicca nella scheda **Game** per dare il controllo al gioco.
 6. Cerca il mercante **MATERIALI**, premi **E**, compra materiali e usa il **BANCO DA LAVORO**.
 
-Per la prima prova puoi comprare **40 pietre e 16 unità di calce**: costano **152 delle 200 monete iniziali** e coprono gli otto pezzi con riuscite normali. Gli errori consumano materiali: questa scorta non copre tentativi falliti aggiuntivi.
+Per la prima prova puoi comprare **40 pietre e 16 unità di calce**: costano **152 delle 200 monete iniziali** e coprono gli otto pezzi di fondamenta e pavimento con riuscite normali. Per finanziare le fasi successive servono le [macchine di estrazione](docs/estrazione.md). Gli errori consumano materiali: questa scorta non copre tentativi falliti aggiuntivi.
 
 ## Comandi essenziali
 
@@ -46,7 +47,7 @@ Per la prima prova puoi comprare **40 pietre e 16 unità di calce**: costano **1
 ## Due dettagli della configurazione attuale
 
 - Esistono `MainMenu` e `GameScene`, ma [EditorBuildSettings.asset](ProjectSettings/EditorBuildSettings.asset) contiene soltanto `GameScene`. Per usare il percorso completo menu → partita → menu in una build, aggiungi entrambe le scene al profilo di build, con `MainMenu` per prima.
-- Le fasi giocabili sono **quattro fondamenta** e **quattro elementi del pavimento**. L'asset dei dialoghi contiene anche traguardi per una costruzione più lunga e una seconda soglia impostata a `1` dopo una prima soglia a `4`: vedi [configurazione e limiti](docs/guida-codice.md#configurazione-attuale-e-limiti).
+- La basilica comprende **82 slot in dieci fasi**, dalle fondamenta alle coperture. L'asset dei dialoghi conserva una seconda soglia impostata a `1` dopo una prima soglia a `4`: vedi [configurazione e limiti](docs/guida-codice.md#configurazione-attuale-e-limiti).
 
 ## Dove si trova il lavoro del progetto
 

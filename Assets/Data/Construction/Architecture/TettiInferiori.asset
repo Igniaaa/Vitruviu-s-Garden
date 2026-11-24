@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f912f2ca61d8ad3489863f81865efdbc, type: 3}
+  m_Name: TettiInferiori
+  m_EditorClassIdentifier: Basilica.Crafting.Core::Basilica.Crafting.CraftingRecipe
+  displayName: Tetti inferiori
+  buildPhase: 7
+  piecePrefab: {fileID: 4700495186851542700, guid: b548b69a5b787e94db8c5d4d12427975, type: 3}
+  outputMaterial: {fileID: 2100000, guid: 361171c97ec355c4abc470a2b3776a22, type: 2}
+  firstCraftVitruvioLine: "Disponete le tegole dal bordo verso il colmo, sovrapponendole nel verso della pioggia perché l'acqua defluisca all'esterno."
+  firstCraftImperatoreLine: "Il primo spiovente proteggerà le sale; controllate che le file restino parallele."
+  costs:
+  - material: {fileID: 11400000, guid: e0ce5a7fec351514d85e9f3ebd28cf29, type: 2}
+    quantity: 4
+  - material: {fileID: 11400000, guid: 6f00d74eee632de4b8d14019ba102c69, type: 2}
+    quantity: 2
+  noteCount: 8
+  minimumHits: 6
+  bpm: 100
+  hitWindow: 0.15

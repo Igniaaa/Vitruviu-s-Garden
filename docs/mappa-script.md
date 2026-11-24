@@ -170,7 +170,7 @@ Espone `CurrentPhase`, `IsReconstructionComplete` e l'evento `OnReconstructionCo
 
 ### [BasilicaCompletionSpawner.cs](../Assets/Scripts/BasilicaCompletionSpawner.cs)
 
-**Compito:** creare la basilica finale una volta sola. Assegna `progressTracker`, `basilicaPrefab` e `spawnPoint`.
+**Compito:** creare la basilica finale una volta sola e nascondere il cantiere con i pezzi posati. Assegna `progressTracker`, `basilicaPrefab`, `spawnPoint` e `constructionRoot`.
 
 Ascolta `OnReconstructionCompleted`, controlla anche lo stato già completato in `Start()` e chiama `SpawnBasilica()`. Se manca il tracker o prefab/punto di uscita registra un errore e si disabilita. Rimuove l'iscrizione quando disabilitato.
 

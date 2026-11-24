@@ -30,6 +30,18 @@ public class PiecePhaseSpawner : MonoBehaviour
 
     [SerializeField] private List<PieceSpawnEntry> spawnEntries = new List<PieceSpawnEntry>();
 
+    // Riusa il prefab già configurato per lo spawn iniziale, senza duplicare il
+    // riferimento nella scena solo per la scorciatoia di debug.
+    public GameObject DebugPiecePrefab
+    {
+        get
+        {
+            foreach (PieceSpawnEntry entry in spawnEntries)
+                if (entry != null && entry.piecePrefab != null) return entry.piecePrefab;
+            return null;
+        }
+    }
+
     [Tooltip("Genera i pezzi appena inizia la scena. Disattivalo per usare la soglia di fase qui sotto.")]
     [SerializeField] private bool spawnAtStart = true;
 

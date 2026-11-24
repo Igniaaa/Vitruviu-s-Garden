@@ -264,7 +264,37 @@ namespace Basilica.Crafting.Tests
             {
                 double steps = (next[i] - next[i - 1]) / .3;
                 Assert.That(steps, Is.EqualTo(Math.Round(steps)).Within(.00001));
-                Assert.That(steps, Is.InRange(.9999, 3.0001));
+                Assert.That(steps, Is.InRange(.9999, 4.0001));
+            }
+        }
+
+        [Test]
+        public void ExpandedPatternsIncludeFullBeatRestsAndDiversePhrases()
+        {
+            var patterns = Enumerable.Range(0, 64).Select(seed => RhythmSequence.GeneratePattern(16, 100, new System.Random(seed))).ToArray();
+            Assert.That(patterns.Any(p => p.Skip(1).Select((t, i) => t - p[i]).Any(gap => Math.Abs(gap - 1.2) < .00001)), Is.True,
+                "The expanded patterns must include two-beat rests, beyond the old three-half-beat maximum.");
+            Assert.That(patterns.Select(p => string.Join(",", p.Select(t => Math.Round(t, 4)))).Distinct().Count(), Is.GreaterThanOrEqualTo(16));
+        }
+
+        [TestCase(40)] [TestCase(100)] [TestCase(140)] [TestCase(180)]
+        public void PatternCountInAlignsWithMetronomeAndEveryLengthIsPlayable(double bpm)
+        {
+            foreach (int count in new[] { 2, 8, 64 })
+            {
+                var pattern = RhythmSequence.GeneratePattern(count, bpm, new System.Random(4321));
+                Assert.That(pattern.Length, Is.EqualTo(count));
+                Assert.That(pattern[0], Is.GreaterThanOrEqualTo(2.4 - .00001));
+                double beats = pattern[0] / (60d / bpm);
+                Assert.That(beats, Is.EqualTo(Math.Round(beats)).Within(.00001));
+                for (int i = 1; i < count; i++)
+                {
+                    double steps = (pattern[i] - pattern[i - 1]) / (30d / bpm);
+                    Assert.That(steps, Is.EqualTo(Math.Round(steps)).Within(.00001));
+                    Assert.That(steps, Is.InRange(.9999, 4.0001));
+                }
+                var next = RhythmSequence.GeneratePattern(count, bpm, new System.Random(4321), pattern);
+                Assert.That(next.SequenceEqual(pattern), Is.False);
             }
         }
 

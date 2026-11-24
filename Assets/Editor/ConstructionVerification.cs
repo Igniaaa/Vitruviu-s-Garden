@@ -201,11 +201,13 @@ public static class ConstructionVerification
         Steps.Enqueue(() =>
         {
             var tracker = UnityEngine.Object.FindFirstObjectByType<MonumentProgressTracker>();
-            Check("AllEightPiecesCompleteBasilica", tracker.IsReconstructionComplete && system.Remaining(foundation) == 0 && system.Remaining(pavement) == 0);
-            Check("FullCycleMaterialBalance", system.Inventory.Count(stone) == 0 && system.Inventory.Count(lime) == 0 && system.Inventory.Coins == 48);
+            bool hasArchitecture = UnityEngine.Object.FindObjectsByType<PlaceholderSlot>(FindObjectsSortMode.None).Any(s => s.BuildPhase > 1);
+            Check("InitialEightPiecesCompleteBase", system.Remaining(foundation) == 0 && system.Remaining(pavement) == 0 &&
+                (hasArchitecture ? !tracker.IsReconstructionComplete && tracker.CurrentPhase == 2 : tracker.IsReconstructionComplete));
+            Check("BaseCycleMaterialBalance", system.Inventory.Count(stone) == 0 && system.Inventory.Count(lime) == 0 && system.Inventory.Coins == 48);
             var completion = UnityEngine.Object.FindFirstObjectByType<BasilicaCompletionSpawner>();
-            Check("CompletedBasilicaSpawned", completion != null && (bool)typeof(BasilicaCompletionSpawner)
-                .GetField("hasSpawned", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(completion));
+            Check("CompletedBasilicaRespectsRemainingArchitecture", completion != null && (bool)typeof(BasilicaCompletionSpawner)
+                .GetField("hasSpawned", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(completion) == !hasArchitecture);
             if (ArchitectDialoguePanel.Instance.IsDialogueActive)
                 typeof(ArchitectDialoguePanel).GetMethod("EndDialogue", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(ArchitectDialoguePanel.Instance, null);
         });
@@ -249,6 +251,10 @@ public static class ConstructionVerification
         if (!system.BeginCraft(recipe)) throw new InvalidOperationException("Cannot craft: " + system.Message);
         var times = (double[])system.Sequence.NoteTimes.Clone();
         for (int i = 0; i < times.Length; i++) system.SubmitBeat(times[i] - (!perfect && i >= recipe.minimumHits ? .2 : 0));
+        // This runner supplies synthetic note times without waiting for real DSP time.
+        // Advance the separate presentation stage explicitly after its last judgment.
+        typeof(ConstructionSystem).GetMethod("AdvanceRhythmFinish", BindingFlags.Instance | BindingFlags.NonPublic)
+            .Invoke(system, new object[] { 1f });
         if (system.IsCrafting) throw new InvalidOperationException("Craft did not settle.");
     }
 

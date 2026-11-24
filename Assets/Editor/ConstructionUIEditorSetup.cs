@@ -29,6 +29,118 @@ public static class ConstructionUIEditorSetup
     [MenuItem("Tools/Vitruvio/Prepare editable construction UI")]
     public static void FromMenu() => Debug.Log(Configure());
 
+    public static string EnsureGenericCoinCounter()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Exit Play Mode first.");
+        var scene = EditorSceneManager.GetActiveScene();
+        if (scene.path != "Assets/Scenes/GameScene.unity") throw new InvalidOperationException("Open GameScene first.");
+        var ui = UnityEngine.Object.FindFirstObjectByType<ConstructionUI>(FindObjectsInactive.Include);
+        if (ui == null) throw new InvalidOperationException("Construction UI is missing.");
+        var existing = ui.transform.Find("Contatore monete")?.GetComponent<TMP_Text>();
+        if (existing == null)
+        {
+            font = ui.transform.Find("Screens/Ricette/Panel/Titolo").GetComponent<TMP_Text>().font;
+            existing = Label("Contatore monete", "MONETE  200", ui.transform, 32, -28, 300, 50, 24, Gold);
+            existing.alignment = TextAlignmentOptions.TopLeft;
+            Outline(existing);
+            Undo.RegisterCreatedObjectUndo(existing.gameObject, "Add generic coin counter");
+        }
+        Set(ui, "coinCounter", existing);
+        EditorUtility.SetDirty(existing);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        return "Added the generic coin counter at the top left of the Canvas.";
+    }
+
+    [MenuItem("Tools/Vitruvio/Add backpack upgrade to shop")]
+    public static string AddBackpackUpgradeButton()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode) throw new System.InvalidOperationException("Exit Play Mode first.");
+        var scene = EditorSceneManager.GetActiveScene();
+        if (scene.path != "Assets/Scenes/GameScene.unity") throw new System.InvalidOperationException("Open GameScene first.");
+        var ui = UnityEngine.Object.FindFirstObjectByType<ConstructionUI>(FindObjectsInactive.Include);
+        if (ui == null || !ui.IsConfigured) throw new System.InvalidOperationException("Construction UI is missing or incomplete.");
+
+        var panel = ui.transform.Find("Screens/Acquisto/Panel");
+        if (panel == null) throw new System.InvalidOperationException("The authored shop panel is missing.");
+        Undo.IncrementCurrentGroup();
+        int group = Undo.GetCurrentGroup();
+        Undo.SetCurrentGroupName("Add backpack upgrade to shop");
+        Undo.RegisterFullObjectHierarchyUndo(ui.gameObject, "Add backpack upgrade to shop");
+        font = TMP_Settings.defaultFontAsset;
+
+        var button = Button("Potenziamento zaino", "POTENZIA ZAINO  ·  +1 SLOT", panel, 44, -228, 1032, 52);
+        if (button.GetComponent<ConstructionBackpackUpgradeRow>() == null)
+            Undo.AddComponent<ConstructionBackpackUpgradeRow>(button.gameObject);
+        var viewport = panel.Find("Viewport").GetComponent<RectTransform>();
+        Place(viewport, 44, -290, 1032, 286);
+        var interactor = UnityEngine.Object.FindFirstObjectByType<PlayerPieceInteractor>(FindObjectsInactive.Include);
+        if (interactor != null)
+        {
+            var interactorData = new SerializedObject(interactor);
+            interactorData.FindProperty("backpackFullPromptMessage").stringValue =
+                "Zaino pieno: potenzialo nel negozio o premi E per rilasciare";
+            interactorData.ApplyModifiedProperties();
+        }
+        Canvas.ForceUpdateCanvases();
+        Undo.CollapseUndoOperations(group);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        AssetDatabase.SaveAssets();
+        return "Added the backpack upgrade button to the saved shop screen.";
+    }
+
+    [MenuItem("Tools/Vitruvio/Add backpack HUD")]
+    public static string AddBackpackHud()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode) throw new System.InvalidOperationException("Exit Play Mode first.");
+        var scene = EditorSceneManager.GetActiveScene();
+        if (scene.path != "Assets/Scenes/GameScene.unity") throw new System.InvalidOperationException("Open GameScene first.");
+        var canvas = GameObject.Find("Canvas");
+        if (canvas == null) throw new System.InvalidOperationException("The scene Canvas is missing.");
+        var existing = canvas.transform.Find("Zaino HUD");
+        if (existing != null && existing.GetComponent<BackpackHud>() != null)
+            return "The backpack HUD is already present.";
+
+        Undo.RegisterFullObjectHierarchyUndo(canvas, "Add backpack HUD");
+        font = TMP_Settings.defaultFontAsset;
+        var root = Rect("Zaino HUD", canvas.transform);
+        root.anchorMin = root.anchorMax = new Vector2(.5f, 0);
+        root.pivot = new Vector2(.5f, 0);
+        root.anchoredPosition = new Vector2(0, 24);
+        root.sizeDelta = new Vector2(276, 86);
+        var hud = Undo.AddComponent<BackpackHud>(root.gameObject);
+
+        var frames = new List<UnityEngine.Object>();
+        var icons = new List<UnityEngine.Object>();
+        var numbers = new List<UnityEngine.Object>();
+        for (int i = 0; i < 3; i++)
+        {
+            var frame = Box("Slot " + (i + 1), root, new Color(.065f, .085f, .09f));
+            Place(frame.rectTransform, (i - 1) * 86, 0, 76, 76, new Vector2(.5f, .5f), new Vector2(.5f, .5f));
+            frame.raycastTarget = false;
+            var icon = Box("Immagine pezzo", frame.transform, Color.white);
+            Place(icon.rectTransform, 0, -5, 54, 54, new Vector2(.5f, .5f), new Vector2(.5f, .5f));
+            icon.preserveAspect = true;
+            icon.raycastTarget = false;
+            icon.enabled = false;
+            var number = Label("Tasto " + (i + 1), (i + 1).ToString(), frame.transform, 5, -3, 20, 20, 18, Gold);
+            number.fontStyle = FontStyles.Bold;
+            number.alignment = TextAlignmentOptions.TopLeft;
+            frames.Add(frame);
+            icons.Add(icon);
+            numbers.Add(number);
+        }
+
+        SetArray(hud, "slotFrames", frames.ToArray());
+        SetArray(hud, "slotIcons", icons.ToArray());
+        SetArray(hud, "slotNumbers", numbers.ToArray());
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        AssetDatabase.SaveAssets();
+        return "Added three numbered backpack slots at the bottom center of the screen.";
+    }
+
     public static string Configure()
     {
         if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Exit Play Mode first.");
@@ -76,7 +188,7 @@ public static class ConstructionUIEditorSetup
         var config = new SerializedObject(system);
         var materials = config.FindProperty("materials");
         var recipes = config.FindProperty("recipes");
-        ListLayout(shop.content);
+        ShopLayout(shop.content);
         ListLayout(bench.content);
         for (int i = 0; i < materials.arraySize; i++)
         {
@@ -138,6 +250,7 @@ public static class ConstructionUIEditorSetup
         SetArray(ui, "tally", judgments.Cast<UnityEngine.Object>().ToArray());
         Set(system, "view", ui);
         foreach (var screen in new[] { shop, bench, rhythm, complete, failed }) screen.root.SetActive(screen == shop);
+        ConstructionRhythmEditorSetup.Apply(ui);
         if (!ui.IsConfigured) throw new InvalidOperationException("Saved UI references are incomplete.");
         Canvas.ForceUpdateCanvases();
         EditorSceneManager.MarkSceneDirty(scene);
@@ -156,7 +269,7 @@ public static class ConstructionUIEditorSetup
         Place(Box("Linea dorata", panel, Gold).rectTransform, 0, 0, 1120, 5);
         Label("Intestazione", "CANTIERE DELLA BASILICA", panel, 44, -34, 1000, 28, 18, Gold);
         var heading = Label("Titolo", title, panel, 44, -80, 1000, 62, 46, Paper);
-        var summary = Label("Riepilogo", "Credito di cantiere: 200 monete", panel, 44, -153, 1000, 72, 23, Muted);
+        var summary = Label("Riepilogo", "Acquista le risorse, poi lavorale al banco.", panel, 44, -153, 1000, 72, 23, Muted);
         var viewport = Box("Viewport", panel, Color.clear).rectTransform;
         Place(viewport, 44, -243, 1032, 310);
         viewport.gameObject.AddComponent<RectMask2D>();
@@ -180,7 +293,7 @@ public static class ConstructionUIEditorSetup
         Place(Box("Linea dorata", panel, Gold).rectTransform, 0, 0, 600, 4);
         var brand = Label("Intestazione", "CANTIERE DELLA BASILICA", panel, 28, -24, 544, 26, 18, Gold);
         var title = Label("Titolo", "Pezzo completato", panel, 28, -62, 544, 48, 34, Paper);
-        var summary = Label("Riepilogo", "Note corrette: 8 / 8    |    Credito: 200 monete", panel, 28, -122, 544, 56, 20, Paper);
+        var summary = Label("Riepilogo", "Note corrette: 8 / 8", panel, 28, -122, 544, 56, 20, Paper);
         var content = Rect("Content", panel);
         Place(content, 28, -190, 544, 124);
         var instructions = Label("Istruzioni", "Chiudi per lasciare il pezzo sul tavolo e ritirarlo a mano,\noppure spostalo nel recinto per liberare il banco.", panel, 28, -330, 544, 52, 17, Paper);
@@ -193,21 +306,108 @@ public static class ConstructionUIEditorSetup
     {
         if(font == null) font = TMP_Settings.defaultFontAsset;
         var card = Box(material.displayName, parent, new Color(.12f, .16f, .17f)).rectTransform;
-        Place(card, 0, 0, 1032, 112);
+        Place(card, 0, 0, 508, 170);
         var row = card.gameObject.AddComponent<ConstructionMaterialRow>();
         row.material = material;
-        row.nameText = Label("Nome materiale", material.displayName, card, 22, -16, 420, 39, 29, Paper);
-        row.stockText = Label("Scorte e prezzo", "Posseduti: 0    |    " + material.unitPrice + " monete / unità", card, 22, -61, 450, 32, 20, Muted);
-        row.purchases = new[] { 1, 5, 10 }.Select((quantity, index) =>
-        {
-            var button = Button("Compra " + quantity, "+" + quantity + "  /  " + (long)quantity * material.unitPrice + " m", card,
-                498 + index * 164, -31, 152, 52);
-            return new ConstructionMaterialRow.Purchase { quantity = quantity, button = button, label = button.GetComponentInChildren<TMP_Text>() };
-        }).ToArray();
+        row.nameText = Label("Nome materiale", material.displayName, card, 18, -10, 472, 36, 27, Paper);
+        row.stockText = Label("Scorte e prezzo", "Posseduti: 0    |    " + material.unitPrice + " monete / unità", card, 18, -48, 472, 28, 18, Muted);
+        QuantityControls(row);
     }
 
-    private static void RecipeRow(Transform parent, CraftingRecipe recipe)
+    private static void QuantityControls(ConstructionMaterialRow row)
     {
+        var card = row.transform;
+        Label("Etichetta quantita", "QUANTITÀ", card, 18, -80, 190, 24, 15, Muted);
+        row.decreaseButton = Button("Diminuisci", "−", card, 18, -110, 44, 44);
+        row.increaseButton = Button("Aumenta", "+", card, 162, -110, 44, 44);
+        row.purchaseButton = Button("ACQUISTA", "ACQUISTA · " + row.material.unitPrice + " m", card, 224, -110, 266, 44);
+        row.purchaseLabel = row.purchaseButton.GetComponentInChildren<TMP_Text>();
+        var background = Box("Quantita", card, new Color(.06f, .09f, .10f));
+        Place(background.rectTransform, 70, -110, 84, 44);
+        var viewport = Rect("Area testo", background.transform);
+        Stretch(viewport); viewport.offsetMin = new Vector2(6, 3); viewport.offsetMax = new Vector2(-6, -3);
+        viewport.gameObject.AddComponent<RectMask2D>();
+        var text = Label("Valore", "1", viewport, 0, 0, 72, 38, 23, Paper);
+        Stretch(text.rectTransform);
+        text.alignment = TextAlignmentOptions.Center;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
+        var input = background.gameObject.AddComponent<TMP_InputField>();
+        input.targetGraphic = background; input.textViewport = viewport; input.textComponent = text;
+        input.contentType = TMP_InputField.ContentType.IntegerNumber;
+        input.lineType = TMP_InputField.LineType.SingleLine;
+        input.characterLimit = 10;
+        input.text = "1";
+        row.quantityInput = input;
+    }
+
+    private static void ShopLayout(RectTransform content)
+    {
+        var grid = content.GetComponent<GridLayoutGroup>() ?? content.gameObject.AddComponent<GridLayoutGroup>();
+        grid.cellSize = new Vector2(508, 170); grid.spacing = new Vector2(16, 16);
+        grid.constraint = GridLayoutGroup.Constraint.FixedColumnCount; grid.constraintCount = 2;
+        grid.childAlignment = TextAnchor.UpperLeft;
+        var fitter = content.GetComponent<ContentSizeFitter>() ?? content.gameObject.AddComponent<ContentSizeFitter>();
+        fitter.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
+        var panel = content.parent.parent;
+        Place((RectTransform)content.parent, 44, -231, 1032, 356);
+        Place(panel.Find("Messaggio").GetComponent<RectTransform>(), 44, -600, 1000, 52);
+        panel.Find("Istruzioni").GetComponent<TMP_Text>().text = "Scegli la quantità con − / + oppure scrivila.\nIl pulsante ACQUISTA mostra il costo totale in monete.";
+    }
+
+    [MenuItem("Tools/Vitruvio/Upgrade shop quantity and grid")]
+    public static void UpgradeShop()
+    {
+        if (EditorApplication.isPlayingOrWillChangePlaymode) throw new InvalidOperationException("Exit Play Mode first.");
+        var scene = EditorSceneManager.GetActiveScene();
+        if (scene.path != "Assets/Scenes/GameScene.unity") throw new InvalidOperationException("Open GameScene first.");
+        var ui = UnityEngine.Object.FindFirstObjectByType<ConstructionUI>(FindObjectsInactive.Include);
+        if (ui == null) throw new InvalidOperationException("Construction UI is missing.");
+        var rows = ui.GetComponentsInChildren<ConstructionMaterialRow>(true);
+        Undo.IncrementCurrentGroup();
+        int group = Undo.GetCurrentGroup();
+        Undo.SetCurrentGroupName("Upgrade shop quantity and grid");
+        Undo.RegisterFullObjectHierarchyUndo(ui.gameObject, "Upgrade shop quantity and grid");
+        font = TMP_Settings.defaultFontAsset;
+        foreach (var row in rows)
+        {
+            if (row.quantityInput != null) continue;
+            // Reuse the authored buttons and preserve any Inspector customization.
+            var oldNames = new[] { "Compra 1", "Compra 5", "Compra 10" };
+            var newNames = new[] { "Diminuisci", "Aumenta", "ACQUISTA" };
+            for (int i = 0; i < oldNames.Length; i++)
+            {
+                var old = row.transform.Find(oldNames[i]);
+                if (old != null) old.name = newNames[i];
+            }
+            Place((RectTransform)row.transform, 0, 0, 508, 170);
+            Place(row.nameText.rectTransform, 18, -10, 472, 36); row.nameText.fontSize = 27;
+            Place(row.stockText.rectTransform, 18, -48, 472, 28); row.stockText.fontSize = 18;
+            QuantityControls(row);
+            EditorUtility.SetDirty(row);
+        }
+        var viewport = ui.transform.Find("Screens/Acquisto/Panel/Viewport");
+        var content = viewport.Find("Content").GetComponent<RectTransform>();
+        if (content.GetComponent<VerticalLayoutGroup>() != null)
+        {
+            var previous = content;
+            previous.name = "Layout precedente";
+            content = Rect("Content", viewport);
+            Place(content, 0, 0, 1032, 356);
+            Undo.RegisterCreatedObjectUndo(content.gameObject, "Create shop grid");
+            foreach (var row in rows) Undo.SetTransformParent(row.transform, content, "Move material to shop grid");
+            previous.gameObject.SetActive(false);
+            viewport.GetComponent<ScrollRect>().content = content;
+        }
+        ShopLayout(content);
+        Canvas.ForceUpdateCanvases();
+        Undo.CollapseUndoOperations(group);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+    }
+
+    public static void RecipeRow(Transform parent, CraftingRecipe recipe)
+    {
+        if (font == null) font = TMP_Settings.defaultFontAsset;
         var card = Box(recipe.displayName, parent, new Color(.12f, .16f, .17f)).rectTransform;
         Place(card, 0, 0, 1032, 134);
         var row = card.gameObject.AddComponent<ConstructionRecipeRow>();
@@ -249,6 +449,15 @@ public static class ConstructionUIEditorSetup
     }
     private static Button Button(string name, string text, Transform parent, float x, float y, float width, float height)
     {
+        var existing = parent.Find(name)?.GetComponent<Button>();
+        if (existing != null)
+        {
+            Place((RectTransform)existing.transform, x, y, width, height);
+            var label = existing.GetComponentInChildren<TMP_Text>();
+            Place(label.rectTransform, 8, 0, width - 16, height);
+            label.text = text;
+            return existing;
+        }
         var image = Box(name, parent, Gold); Place(image.rectTransform, x, y, width, height);
         var button = image.gameObject.AddComponent<Button>(); button.targetGraphic = image;
         var colors = button.colors; colors.highlightedColor = new Color(1, .92f, .72f);

@@ -8,6 +8,10 @@ Vicino al punto iniziale di GameScene si trovano il banco da lavoro e il mercant
 
 Acquista pietra e calce dal mercante, poi seleziona una ricetta al banco. La ricetta richiede tutti i materiali prima di iniziare. Premi **Spazio** quando ogni nota attraversa la linea dorata; premi **Esc** per mettere in pausa senza perdere note. Le pressioni anticipate fanno perdere la nota successiva, quindi premere ripetutamente non aiuta.
 
+Il ritmo combina **16 motivi** con colpi regolari, coppie ravvicinate, sincopi e pause, sulla griglia di mezzo battito della ricetta. Il primo bersaglio è allineato al metronomo dopo almeno 2,4 secondi di preparazione; il pattern non ripete immediatamente il precedente. Il pannello compatto usa una corsia da 640 pixel e note a 340 pixel/secondo: dalla comparsa alla linea del colpo passano circa **1,5 secondi**.
+
+Dopo l'ultimo giudizio, il conteggio e gli indicatori rimangono visibili per **0,45 secondi**, poi pannello e audio sfumano per **0,35 secondi**. Solo dopo viene mostrato il risultato e liquidato il costo. Durante questa chiusura, ulteriori colpi e Annulla non cambiano l'esito. La pausa e la perdita del focus congelano la chiusura. In `ConstructionSystem` puoi regolare **Rhythm Result Hold** e **Rhythm Fade Duration**.
+
 All'avvio della lavorazione parte un **metronomo al BPM della ricetta**, con un accento ogni quattro battiti, insieme a un breve **motivetto originale** dal timbro pizzicato. I suoni più acuti indicano le note da colpire. L'accompagnamento si sente già durante «Preparati» e segue pausa, ripresa e fine del tentativo.
 
 In `GameManager > RhythmAudio` puoi regolare separatamente `Metronome Volume`, `Melody Volume` e `Note Volume`, oltre al volume generale. Imposta `Melody Volume` a `0` per disattivare il motivetto mantenendo il metronomo e gli accenti delle note.
@@ -23,13 +27,13 @@ Alla riuscita, l'interfaccia diventa trasparente e si dispone sul bordo dello sc
 
 Alla riuscita si attiva anche una visuale ravvicinata del pezzo: `CraftingResultView` riposiziona temporaneamente la camera del giocatore rispetto all'uscita del banco, lasciando il pezzo sulla sinistra e i comandi sulla destra. Chiudi o invio al recinto ripristinano posizione locale, rotazione, campo visivo e controllo Cinemachine precedenti. La pausa conserva l'inquadratura; un deposito pieno mantiene la visuale del risultato. Il componente su `GameManager` espone offset, campo visivo e spostamento orizzontale per regolare l'inquadratura.
 
-Porta il pezzo al placeholder. Completa le quattro fondamenta per sbloccare i quattro elementi del pavimento. Il banco considera anche i pezzi già creati e ancora da posare, inclusi quelli nel recinto, per evitare di produrne più del necessario.
+Porta il pezzo al placeholder. Completa le quattro fondamenta per sbloccare i quattro elementi del pavimento; seguono altre otto fasi architettoniche, per **82 slot complessivi**. I collider seguono posizione e ingombro delle mesh, anche per gli elementi in quota. La [guida alla ricostruzione](ricostruzione-basilica.md) elenca parti, ricette e asset di origine. Il banco considera anche i pezzi già creati e ancora da posare, inclusi quelli nel recinto, per evitare di produrne più del necessario.
 
 Il riferimento `Storage Area` di `ConstructionSystem` punta a `ConstructionStorageArea` sul `PieceRespawnPoint` esistente all'interno di `Fences`. Il suo `Volume` descrive l'ingombro del deposito: il sistema cerca terreno solido e spazio libero, azzera le velocità e aggiorna subito la fisica dopo il trasferimento. La schermata completata non crea camere o RenderTexture; negozio, ricette, minigioco e risultati non riusciti mantengono il loro layout normale.
 
 Materiali e ricette sono in `Assets/Data/Construction`. Prezzi, costi, prefab, fase, BPM, tolleranza, numero di note e soglia sono modificabili nei relativi asset. Le quantità devono essere positive e pari. `ConstructionSystem` sul GameManager contiene credito iniziale (200), materiali e ricette; `ConstructionStation` contiene tipo di postazione, punto e ingombro dell'uscita.
 
-Il credito non si ricarica e la partita non salva l'inventario fra avvii. Le otto riuscite normali costano 152 monete; fallimenti ripetuti possono esaurire le risorse. Modifica il credito iniziale per il bilanciamento.
+La partita non salva l'inventario fra avvii. Le otto riuscite normali di fondamenta e pavimento costano 152 monete; le [macchine di estrazione](estrazione.md) producono il credito per proseguire le altre fasi. Fallimenti ripetuti possono esaurire le risorse. Modifica il credito iniziale per il bilanciamento.
 
 `Tools > Vitruvio > Configure construction crafting` configura esplicitamente la scena aperta; non modifica asset e postazioni già esistenti. Il vecchio `PiecePhaseSpawner` resta disponibile ma disattivato in GameScene.
 

@@ -18,17 +18,20 @@ Canvas
           Viewport
             Content
               Pietra                  ConstructionMaterialRow
-                Compra 1 / Compra 5 / Compra 10
+                Quantita / Diminuisci / Aumenta / ACQUISTA
               Calce                   ConstructionMaterialRow
               Legno                   ConstructionMaterialRow
               Ferro                   ConstructionMaterialRow
           CHIUDI [E]
       Ricette
         Panel
+          Categorie                   pulsanti del catalogo
+          Categoria selezionata
           Viewport
             Content
               Fondamenta              ConstructionRecipeRow
               Pavimento               ConstructionRecipeRow
+              ...                     dieci schede con silhouette
       Ritmo
         Panel
           Viewport
@@ -64,8 +67,10 @@ Lavora **fuori da Play Mode**, poi salva la scena con Ctrl+S.
 | Colore o trasparenza del fondo | Componente `Image` sulla schermata o su `Panel` |
 | Font, dimensione, allineamento e colore | L'oggetto di testo, componente `TextMeshPro - Text (UI)` |
 | Aspetto di un pulsante | I componenti `Image` e `Button`, più il testo figlio `Etichetta` |
-| Distanza tra righe di acquisto o ricetta | `Viewport > Content`, componente `VerticalLayoutGroup` |
-| Altezza di una riga | Il `RectTransform` della riga; il gruppo dispone le righe verticalmente |
+| Dimensioni, colonne e distanza delle schede del negozio | `Acquisto > Panel > Viewport > Content`, componente `GridLayoutGroup` |
+| Dimensioni e distanza delle schede delle ricette | `Ricette > Panel > Viewport > Content`, componente `GridLayoutGroup` |
+| Categorie e aspetto della selezione | `Ricette > Panel > Categorie`, componenti `ConstructionCategoryButton` |
+| Silhouette della ricetta | `Riquadro silhouette > Silhouette` sulla scheda; campo `Silhouette` di `ConstructionRecipeRow` |
 | Area scorrevole | `Viewport`, con `ScrollRect` e `RectMask2D` |
 | Corsia, linea e forma delle note | Gli oggetti salvati sotto `Ritmo > Panel > Viewport > Content > Corsia` |
 | Distanza tra indicatori dei colpi | `Giudizi`, componente `GridLayoutGroup` |
@@ -80,14 +85,13 @@ Puoi modificare direttamente titoli fissi, istruzioni ed etichette statiche. I c
 
 Le coordinate X delle note cambiano mentre scorrono e la larghezza della finestra del colpo segue la tolleranza della ricetta. Il resto del layout e dello stile rimane quello salvato nel Canvas.
 
-## 3. Aggiungere un materiale o cambiare i tagli di acquisto
+## 3. Quantità di acquisto e nuovi materiali
 
-Per cambiare i tagli `+1`, `+5`, `+10`:
+Il negozio presenta i materiali in una griglia a due colonne. Ogni scheda contiene un campo numerico **Quantita**, i pulsanti **Diminuisci** (−) e **Aumenta** (+) e un pulsante **ACQUISTA** con il prezzo totale aggiornato. Puoi scrivere direttamente qualsiasi quantità intera positiva oppure modificarla di una unità alla volta. Il valore resta selezionato dopo un acquisto e alla riapertura del menu durante la partita.
 
-1. Seleziona la riga `Pietra` o `Calce` nella schermata Acquisto.
-2. Nel componente **ConstructionMaterialRow**, apri l'elenco **Purchases**.
-3. Modifica `Quantity` della voce desiderata. `Button` e `Label` devono puntare al pulsante e alla sua etichetta.
-4. Salva e prova: testo, prezzo e acquisto useranno quella quantità.
+Il pulsante di acquisto si disabilita se il campo è vuoto, il numero non è valido o il credito non basta. Il prezzo unitario e le scorte sono visibili su ogni scheda; il credito e tutte le disponibilità vengono aggiornati dopo ogni acquisto.
+
+Nel componente **ConstructionMaterialRow**, i campi **Quantity Input**, **Decrease Button**, **Increase Button**, **Purchase Button** e **Purchase Label** devono riferirsi ai controlli della stessa scheda. Il valore iniziale si modifica nel campo **Text** del `TMP_InputField` Quantita (normalmente `1`).
 
 Per aggiungere un materiale:
 
@@ -96,18 +100,28 @@ Per aggiungere un materiale:
 3. Assegna il nuovo asset al campo **Material** del suo componente `ConstructionMaterialRow`.
 4. Controlla che i riferimenti a testi e pulsanti siano quelli della riga duplicata.
 
-Il gruppo di layout dispone la nuova riga. Il controller trova tutte le righe già presenti nella schermata e collega gli acquisti senza crearne altre. Un materiale aggiunto al solo elenco del sistema non genera automaticamente una nuova riga.
+La griglia dispone la nuova scheda e l'area scorrevole si adatta alle righe aggiuntive. Il controller trova tutte le schede già presenti nella schermata e collega gli acquisti senza crearne altre. Un materiale aggiunto al solo elenco del sistema non genera automaticamente una nuova scheda.
 
 ## 4. Aggiungere una ricetta
+
+Il banco mostra sette categorie: **Fondamenta, Pavimenti, Colonne, Muri, Supporti tetti, Tetti e Scale**. Le dieci ricette sono distribuite in queste categorie; Pavimenti comprende anche il piano superiore, Colonne comprende i capitelli e Tetti comprende entrambe le coperture. La categoria della fase corrente si apre alla prima visita e quando la fase cambia. Una scelta manuale resta selezionata tornando al banco; cambiare categoria riporta la griglia all'inizio. I pezzi futuri sono consultabili e conservano i normali vincoli sul pulsante CREA.
+
+Ogni scheda presenta una **silhouette nera di una mesh rappresentativa della ricetta**, con margini trasparenti su un riquadro chiaro. Gli sprite sono in `Assets/UI/Construction/Silhouettes`; derivano dai placeholder della basilica, compresi scala e orientamento. Il comando **Tools > Vitruvio > Prepare construction categories and silhouettes** genera gli sprite e prepara i controlli salvati nel Canvas. Ripetere il comando riutilizza gli oggetti esistenti. Il runtime filtra le schede e aggiorna dati e selezione senza ricostruirle.
 
 1. Crea/configura l'asset `CraftingRecipe` e aggiungilo a `ConstructionSystem > Recipes`.
 2. In `Ricette > Panel > Viewport > Content`, duplica una riga esistente.
 3. Assegna il nuovo asset al campo **Recipe** del componente `ConstructionRecipeRow`.
 4. Modifica l'aspetto della riga e controlla i suoi riferimenti.
 
+Assegna anche **Category** e **Silhouette**, oppure richiama lo strumento del catalogo dopo aver predisposto il placeholder della nuova fase.
+
 Il componente aggiorna nome, costi, stato e pulsante CREA. I campi **Available Color** e **Blocked Color** regolano i colori della disponibilità. La logica continua a verificare fase, materiali, uscita libera e numero di pezzi necessari.
 
 ## 5. Note ritmiche, risultato e visuale
+
+Il pannello **Ritmo** misura 900 × 620; la sua corsia misura 640 × 100, con la linea del colpo a X 128 e **Note Speed = 340**. L'anticipo visivo è circa 1,5 secondi. Il `CanvasGroup` salvato sulla schermata è collegato a **Rhythm Group** di `ConstructionUI` e permette la dissolvenza finale. **Tools > Vitruvio > Prepare compact rhythm panel** applica esplicitamente questo layout alla scena; il runtime aggiorna note e opacità senza ricostruire la UI.
+
+La schermata conserva l'ultimo giudizio per 0,45 secondi e sfuma nei successivi 0,35 secondi, insieme all'audio. **Rhythm Result Hold** e **Rhythm Fade Duration**, su `GameManager > ConstructionSystem`, regolano i due tempi. All'apertura successiva opacità e pulsante Annulla vengono ripristinati. I 16 motivi e le loro combinazioni sono generati da `RhythmSequence` sulla griglia ritmica della ricetta.
 
 La scena contiene già **64 note e 64 indicatori**, sufficienti per tutte le lunghezze di ricetta valide. Il controller attiva soltanto gli elementi necessari. Non serve duplicare oggetti durante il gioco; conserva i riferimenti degli elenchi `Notes` e `Tally` sul componente `ConstructionUI`.
 
@@ -119,7 +133,7 @@ La scena contiene già **64 note e 64 indicatori**, sufficienti per tutte le lun
 | --- | --- |
 | [ConstructionSystem](../Assets/Scripts/Construction/ConstructionSystem.cs) | Riferimento serializzato `View` alla UI della scena; coordina acquisti, lavorazione, esiti, deposito e visuale |
 | [ConstructionUI](../Assets/Scripts/Construction/ConstructionUI.cs) | Seleziona le schermate salvate, aggiorna testi, note, pulsanti e stato di pausa |
-| [ConstructionMaterialRow](../Assets/Scripts/Construction/ConstructionMaterialRow.cs) | Collega una riga materiale e i suoi pulsanti all'acquisto |
+| [ConstructionMaterialRow](../Assets/Scripts/Construction/ConstructionMaterialRow.cs) | Gestisce quantità selezionata, prezzo totale e disponibilità dell'acquisto di un materiale |
 | [ConstructionRecipeRow](../Assets/Scripts/Construction/ConstructionRecipeRow.cs) | Collega una riga ricetta al crafting e ne aggiorna disponibilità e dati |
 | [CraftingResultView](../Assets/Scripts/Construction/CraftingResultView.cs) | Inquadra il pezzo reale e ripristina la camera |
 

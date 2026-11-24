@@ -39,6 +39,13 @@ namespace Basilica.Crafting
             return true;
         }
 
+        public bool TrySpendCoins(int amount)
+        {
+            if (busy || amount <= 0 || Coins < amount) return false;
+            Coins -= amount;
+            return true;
+        }
+
         public bool TryBuy(MaterialDefinition material, int quantity, out string error)
         {
             error = null;

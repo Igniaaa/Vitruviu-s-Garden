@@ -6,6 +6,7 @@ public sealed class BasilicaCompletionSpawner : MonoBehaviour
     [SerializeField] private MonumentProgressTracker progressTracker;
     [SerializeField] private GameObject basilicaPrefab;
     [SerializeField] private Transform spawnPoint;
+    [SerializeField] private GameObject constructionRoot;
 
     private bool hasSpawned;
 
@@ -69,5 +70,6 @@ public sealed class BasilicaCompletionSpawner : MonoBehaviour
 
         hasSpawned = true;
         Instantiate(basilicaPrefab, spawnPoint.position, spawnPoint.rotation);
+        if (constructionRoot != null) constructionRoot.SetActive(false);
     }
 }

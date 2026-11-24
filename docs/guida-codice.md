@@ -150,7 +150,7 @@ Le fasi e le milestone hanno scopi diversi:
 
 `ArchitectDialoguePanel` mostra le battute una alla volta. `DialogueLog` conserva la voce e `DialogueJournalPanel` la rende rileggibile con Tab, E e Q.
 
-Quando tutte le fasi degli slot rilevati sono complete, il tracker invia `OnReconstructionCompleted`. `BasilicaCompletionSpawner` crea una sola istanza della basilica sul punto assegnato. Non elimina automaticamente i pezzi già posati.
+Quando tutte le fasi degli slot rilevati sono complete, il tracker invia `OnReconstructionCompleted`. `BasilicaCompletionSpawner` crea una sola istanza della basilica sul punto assegnato e nasconde `Construction Root`, che contiene gli slot e i pezzi posati.
 
 ## 4. Cosa blocca cosa
 
@@ -178,16 +178,18 @@ Questi dati vengono dai file salvati, non da una nuova verifica in Play Mode:
 | Pietra / calce | 3 / 2 monete a unità |
 | Ricetta Fondamenta, fase 0 | 4 pietre + 2 calce, per ciascuno dei 4 slot |
 | Ricetta Pavimento, fase 1 | 6 pietre + 2 calce, per ciascuno dei 4 slot |
-| Identificativo condiviso dei pezzi/slot attuali | `C1`; la fase distingue le due ricette |
+| Identificativo condiviso dei pezzi/slot attuali | `C1`; la fase distingue le dieci ricette |
 | Raggio massimo di interazione in `GameScene` | 5 metri, mentre il valore iniziale nel sorgente è 3 |
 | Distanza del pezzo tenuto in `GameScene` | 2 metri, mentre il valore iniziale nel sorgente è 1,5 |
 | `PiecePhaseSpawner` | Presente ma disabilitato; la produzione avviene al banco |
 
-Nel file di scena esiste anche un'istanza `PlaceHolder` disattivata: non rientra negli otto slot attivi rilevati dal tracker.
+Nel file di scena esiste anche un'istanza `PlaceHolder` disattivata: non rientra negli 82 slot del cantiere rilevati dal tracker.
+
+Gli otto slot iniziali sono sotto `Basilica - Cantiere > Foundations / Pavement`, divisi nei quattro quadranti. La base misura circa **74,991 × 56,917 metri**, centrata in **X 412,300 / Z 520,992**, da **Y 2,244** a circa **Y 3,994**. Il riferimento disattivato `BASILICA FIN 2026`, usato per il completamento, appartiene allo stesso gruppo: sposta o ruota `Basilica - Cantiere` mantenendone la scala `(1, 1, 1)`. Gli altri **74 slot**, sotto `Architettura`, usano le mesh degli FBX per colonnati, capitelli, pareti, architravi, piano superiore, tetti e gradini. Vedi [Ricostruzione della basilica](ricostruzione-basilica.md) per fasi, ricette e collider adattati alle mesh.
 
 **Valori in Inspector e valori nel codice:** il `= 200` di un campo definisce un valore iniziale. Se una scena o un prefab ha già un valore salvato, è quello a essere usato. Per questo modificare il numero nel sorgente può non cambiare la partita.
 
-**Soglie dei dialoghi:** l'asset attuale contiene `4, 1, 26, 34, 42, 48, 56, 64`. Il tracker rispetta l'ordine dell'elenco e controlla una sola milestone per posa: il primo dialogo scatta al quarto pezzo e il secondo, con soglia `1`, al quinto. Le soglie da `26` in poi superano gli otto slot attuali. Per ottenere un dialogo a fine fondamenta e uno a fine pavimento, imposta rispettivamente `4` e `8`.
+**Soglie dei dialoghi:** l'asset attuale contiene `4, 1, 26, 34, 42, 48, 56, 64`. Il tracker rispetta l'ordine dell'elenco e controlla una sola milestone per posa: il primo dialogo scatta al quarto pezzo e il secondo, con soglia `1`, al quinto. Tutte le soglie sono raggiungibili negli 82 slot, ma non coincidono necessariamente con la fine delle nuove fasi. Per ottenere un dialogo a fine fondamenta e uno a fine pavimento, imposta rispettivamente `4` e `8`.
 
 **Memoria e salvataggi:** inventario e monete vengono ricreati nell'`Awake()` del sistema; il progresso è runtime e non ha un caricamento da disco. `DialogueLog` è una lista statica in memoria, senza metodo di svuotamento: può conservare voci fra cambi scena nella stessa esecuzione. Non è un salvataggio permanente. In Editor la sua durata dipende anche dalle impostazioni di Domain Reload. `AudioManager` sopravvive ai cambi scena; non contiene un salvataggio esplicito dei volumi su disco.
 

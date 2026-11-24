@@ -19,6 +19,9 @@ namespace Basilica.Crafting
         public string displayName;
         [Min(0)] public int buildPhase;
         public GameObject piecePrefab;
+        public Material outputMaterial;
+        [TextArea(2, 3)] public string firstCraftVitruvioLine;
+        [TextArea(2, 3)] public string firstCraftImperatoreLine;
         public MaterialCost[] costs = Array.Empty<MaterialCost>();
         [Range(2, 64)] public int noteCount = 8;
         [Min(1)] public int minimumHits = 6;

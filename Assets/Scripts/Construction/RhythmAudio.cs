@@ -29,7 +29,7 @@ public sealed class RhythmAudio : MonoBehaviour
         Stop();
         if (source == null) source = GetComponent<AudioSource>();
         const int rate = 44100;
-        var samples = new float[(int)Math.Ceiling((notes[notes.Length - 1] + .6) * rate)];
+        var samples = new float[(int)Math.Ceiling((notes[notes.Length - 1] + 1) * rate)];
         double beat = 60d / bpm;
         for (int index = 0; index * beat < notes[notes.Length - 1] + .3; index++)
         {
@@ -94,6 +94,11 @@ public sealed class RhythmAudio : MonoBehaviour
         if (value) { pausedAt = AudioSettings.dspTime; source.Pause(); }
         else { pausedDuration += AudioSettings.dspTime - pausedAt; source.UnPause(); }
         paused = value;
+    }
+
+    public void SetOutroProgress(float progress)
+    {
+        if (source != null) source.volume = volume * (1 - Mathf.SmoothStep(0, 1, Mathf.Clamp01(progress)));
     }
 
     public void Stop()

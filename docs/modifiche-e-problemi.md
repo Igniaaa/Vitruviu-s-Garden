@@ -27,7 +27,7 @@ I nomi come `startingCoins` sono quelli del codice: nell'Inspector il campo può
 | Velocità del personaggio | `StarterAssets.FirstPersonController` sul giocatore |
 | Reattività e dimensione del pezzo in mano | `DraggableObject` sul prefab del pezzo |
 | Colori e layout delle interfacce | GameObject sotto `Canvas > Construction UI > Screens`, componenti RectTransform / Image / TextMeshPro / Button |
-| Quantità dei pulsanti di acquisto | Componente `ConstructionMaterialRow` sulla riga, elenco `Purchases > Quantity` |
+| Quantità da acquistare | Campo numerico `Quantita` sulla scheda del materiale, modificabile anche con − / + |
 | Livelli del metronomo, motivetto e accenti delle note | `GameManager > RhythmAudio > Metronome Volume / Melody Volume / Note Volume` |
 | Destinazione dei pezzi creati | `GameManager > ConstructionSystem > Storage Area`, collegato al componente `ConstructionStorageArea` del deposito |
 | Inquadratura del pezzo completato | `GameManager > CraftingResultView > View Offset / Field Of View / Horizontal Framing` |
@@ -44,7 +44,7 @@ Il credito non si ricarica da solo e non viene ricostruito mentre una partita è
 
 ### Un prezzo diverso
 
-Apri `Pietra.asset` o `Calce.asset` e cambia **Unit Price**, mantenendolo maggiore di zero. Avvia la partita e apri il mercante: verifica il prezzo unitario e quello dei pulsanti `+1`, `+5`, `+10`.
+Apri `Pietra.asset` o `Calce.asset` e cambia **Unit Price**, mantenendolo maggiore di zero. Avvia la partita e apri il mercante: scegli una quantità e verifica il prezzo unitario e il costo totale sul pulsante **ACQUISTA**.
 
 ### Un minigioco più facile
 

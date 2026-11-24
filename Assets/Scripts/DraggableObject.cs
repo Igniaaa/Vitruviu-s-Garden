@@ -39,11 +39,14 @@ public class DraggableObject : MonoBehaviour
     // BeginDrag/EndDrag), evitando che ci si incastri contro un pezzo fermo mentre il
     // giocatore continua a muoversi.
     private static readonly List<DraggableObject> lockedPieces = new List<DraggableObject>();
+    private static readonly Dictionary<Mesh, Mesh> craftPreviewMeshes = new Dictionary<Mesh, Mesh>();
 
     private Rigidbody rb;
     private Collider col;
     private Collider playerCollider;
     private MeshFilter meshFilter;
+    private Renderer[] childRenderers;
+    private bool[] rendererEnabledBeforeStorage;
     private Vector3 targetPosition;
     private Vector3 originalScale;
     private Vector3 lockedScale;
@@ -51,10 +54,64 @@ public class DraggableObject : MonoBehaviour
     private bool isLocked;
     private float timeOutsideTrace;
     private bool collisionIgnoredWhileStuck;
+    private bool isStoredInBackpack;
+    private bool colliderEnabledBeforeStorage;
 
     public bool IsDragging => isDragging;
     public bool IsLocked => isLocked;
     public string PieceId => pieceId;
+
+    // Usa una mesh architettonica come anteprima del pezzo prodotto, normalizzata
+    // per poterla trasportare; al posizionamento LockAt ripristina la mesh completa.
+    public void SetCraftPreview(Mesh sourceMesh, Material previewMaterial)
+    {
+        if (sourceMesh == null || meshFilter == null)
+        {
+            return;
+        }
+
+        if (!craftPreviewMeshes.TryGetValue(sourceMesh, out Mesh previewMesh) || previewMesh == null)
+        {
+            previewMesh = Instantiate(sourceMesh);
+            Bounds bounds = previewMesh.bounds;
+            Vector3 size = bounds.size;
+            float largestDimension = Mathf.Max(size.x, size.y, size.z);
+            if (largestDimension <= 0.0001f)
+            {
+                Destroy(previewMesh);
+                return;
+            }
+
+            Vector3[] vertices = previewMesh.vertices;
+            float scale = 0.85f / largestDimension;
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                vertices[i] = (vertices[i] - bounds.center) * scale;
+            }
+
+            previewMesh.vertices = vertices;
+            previewMesh.RecalculateBounds();
+            previewMesh.name = sourceMesh.name + " (Craft Preview)";
+            craftPreviewMeshes[sourceMesh] = previewMesh;
+        }
+
+        meshFilter.sharedMesh = previewMesh;
+
+        Renderer pieceRenderer = meshFilter.GetComponent<Renderer>();
+        if (pieceRenderer != null && previewMaterial != null)
+        {
+            int materialCount = Mathf.Max(1, previewMesh.subMeshCount);
+            Material[] materials = new Material[materialCount];
+            for (int i = 0; i < materials.Length; i++) materials[i] = previewMaterial;
+            pieceRenderer.sharedMaterials = materials;
+        }
+
+        if (col is BoxCollider boxCollider)
+        {
+            boxCollider.center = previewMesh.bounds.center;
+            boxCollider.size = Vector3.Max(previewMesh.bounds.size, Vector3.one * 0.05f);
+        }
+    }
 
     // Invocato al rilascio del pezzo, così un PlaceholderSlot nelle vicinanze
     // può verificare se agganciare il pezzo.
@@ -65,6 +122,10 @@ public class DraggableObject : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
         meshFilter = GetComponentInChildren<MeshFilter>();
+        childRenderers = GetComponentsInChildren<Renderer>(true);
+        rendererEnabledBeforeStorage = new bool[childRenderers.Length];
+        for (int i = 0; i < childRenderers.Length; i++)
+            rendererEnabledBeforeStorage[i] = childRenderers[i] != null && childRenderers[i].enabled;
         originalScale = transform.localScale;
 
         GameObject player = GameObject.FindGameObjectWithTag("Player");
@@ -110,6 +171,56 @@ public class DraggableObject : MonoBehaviour
         }
 
         SetHeldCollisionIgnored(true);
+    }
+
+    public void StoreInBackpack()
+    {
+        if (isLocked || isStoredInBackpack) return;
+
+        isDragging = false;
+        timeOutsideTrace = 0f;
+        if (collisionIgnoredWhileStuck && col != null) col.enabled = true;
+        collisionIgnoredWhileStuck = false;
+        SetHeldCollisionIgnored(false);
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+            rb.useGravity = false;
+            rb.freezeRotation = true;
+            rb.isKinematic = true;
+        }
+
+        if (col != null)
+        {
+            colliderEnabledBeforeStorage = col.enabled;
+            col.enabled = false;
+        }
+        for (int i = 0; i < childRenderers.Length; i++)
+            if (childRenderers[i] != null) childRenderers[i].enabled = false;
+        isStoredInBackpack = true;
+    }
+
+    public void RetrieveFromBackpack(Vector3 worldPosition)
+    {
+        if (!isStoredInBackpack || isLocked) return;
+
+        transform.position = worldPosition;
+        if (col != null) col.enabled = colliderEnabledBeforeStorage;
+        for (int i = 0; i < childRenderers.Length; i++)
+            if (childRenderers[i] != null) childRenderers[i].enabled = rendererEnabledBeforeStorage[i];
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = false;
+            rb.freezeRotation = true;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        isStoredInBackpack = false;
+        BeginDrag();
     }
 
     // Chiamato ad ogni frame dal PlayerPieceInteractor mentre il pezzo è tenuto in mano,

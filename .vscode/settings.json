@@ -67,5 +67,6 @@
         "*.sln": "*.csproj",
         "*.slnx": "*.csproj"
     },
-    "dotnet.defaultSolution": "Vitruviu-s-Garden.slnx"
+    "dotnet.defaultSolution": "Vitruviu-s-Garden.slnx",
+    "FSharp.suggestGitignore": false
 }

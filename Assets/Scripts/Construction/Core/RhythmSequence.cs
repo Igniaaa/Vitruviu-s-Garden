@@ -13,6 +13,14 @@ namespace Basilica.Crafting
         private readonly double window;
         private readonly int minimumHits;
         private int next;
+        // Half-beat intervals: straight beats, pickups, syncopation, bursts and rests.
+        private static readonly int[][] Motifs =
+        {
+            new[] { 2, 2, 2, 2 }, new[] { 1, 1, 2, 2 }, new[] { 2, 1, 1, 2 }, new[] { 2, 2, 1, 1 },
+            new[] { 1, 2, 1, 2 }, new[] { 3, 1, 2, 2 }, new[] { 2, 3, 1, 2 }, new[] { 1, 3, 1, 3 },
+            new[] { 4, 1, 1, 2 }, new[] { 2, 1, 1, 4 }, new[] { 1, 1, 1, 1, 2, 2 }, new[] { 1, 2, 1, 4 },
+            new[] { 3, 3, 1, 1 }, new[] { 1, 1, 3, 3 }, new[] { 2, 4, 1, 1 }, new[] { 4, 2, 1, 1 }
+        };
         public CraftOutcome Outcome => Hits == NoteTimes.Length && Errors == 0 ? CraftOutcome.PerfectSuccess :
             Hits >= minimumHits ? CraftOutcome.NormalSuccess : CraftOutcome.Failure;
 
@@ -55,10 +63,20 @@ namespace Basilica.Crafting
                 throw new ArgumentException("Invalid pattern settings");
             double step = 30d / bpm;
             var times = new double[count];
-            times[0] = 2.4;
-            for (int i = 1; i < count; i++) times[i] = times[i - 1] + step * random.Next(1, 4);
+            double beat = step * 2;
+            times[0] = Math.Ceiling(2.4 / beat - 1e-9) * beat;
+            int motif = random.Next(Motifs.Length), offset = 0;
+            for (int i = 1; i < count; i++)
+            {
+                times[i] = times[i - 1] + step * Motifs[motif][offset++];
+                if (offset == Motifs[motif].Length)
+                {
+                    motif = (motif + 1 + random.Next(Motifs.Length - 1)) % Motifs.Length;
+                    offset = 0;
+                }
+            }
             if (previous != null && times.SequenceEqual(previous))
-                times[count - 1] = times[count - 2] + step * (times[count - 1] - times[count - 2] < 2.5 * step ? 3 : 1);
+                times[count - 1] = times[count - 2] + step * ((int)Math.Round((times[count - 1] - times[count - 2]) / step) % 4 + 1);
             return times;
         }
     }

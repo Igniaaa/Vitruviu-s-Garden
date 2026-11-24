@@ -154,8 +154,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlaceholderSlot
   pieceId: 
+  buildPhase: 0
   placeholderColor: {r: 0.3, g: 0.7, b: 1, a: 0.35}
   highlightColor: {r: 0.3, g: 1, b: 0.4, a: 0.6}
   wrongColor: {r: 1, g: 0, b: 0, a: 0.6}
   edgeMaterial: {fileID: 0}
   edgeColor: {r: 1, g: 1, b: 1, a: 1}
+  dustParticleCount: 1000
+  dustRadiusMultiplier: 1.5
+  dustParticleSizeMin: 0.3
+  dustParticleSizeMax: 0.7
+  dustLifetimeMin: 0.5
+  dustLifetimeMax: 1.5
+  dustColor: {r: 0.88, g: 0.82, b: 0.7, a: 1}
+  dustPeakOpacity: 1

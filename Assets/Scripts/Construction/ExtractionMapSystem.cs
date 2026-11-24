@@ -87,7 +87,7 @@ public sealed class ExtractionMapSystem : MonoBehaviour
             details.text="Configura una macchina valida nell'Inspector.";
             installButton.interactable=false; return;
         }
-        summary.text="Credito: "+Inventory.Coins+" monete    |    "+string.Join("    ",machine.costs.Select(c=>c.material!=null?c.material.displayName+": "+Inventory.Count(c.material):"Materiale mancante"));
+        summary.text=string.Join("    ",machine.costs.Select(c=>c.material!=null?c.material.displayName+": "+Inventory.Count(c.material):"Materiale mancante"));
         foreach(var p in points) p.label.text=p.name+"\n"+(p.installed?"Macchina attiva":"Punto libero");
         if(selected==null) details.text="Scegli un punto sulla mappa.\n\nAcquista legno e ferro dal mercante dei materiali.";
         else details.text=selected.name+"\n"+machine.displayName+"\n\n"+(selected.installed?

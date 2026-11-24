@@ -19,9 +19,15 @@ public sealed class ConstructionUI : MonoBehaviour
     [Header("Testi dinamici")]
     [SerializeField] private TMP_Text shopSummary, shopMessage;
     [SerializeField] private TMP_Text workbenchSummary, workbenchMessage;
+    [SerializeField] private TMP_Text coinCounter;
     [SerializeField] private TMP_Text rhythmSummary, rhythmMessage, score;
     [SerializeField] private TMP_Text completedTitle, completedSummary, completedMessage;
     [SerializeField] private TMP_Text failedTitle, failedSummary, failedMessage;
+
+    [Header("Catalogo dei pezzi")]
+    [SerializeField] private TMP_Text categoryTitle;
+    [SerializeField] private ScrollRect recipeScroll;
+    [SerializeField] private ConstructionPieceCategory selectedCategory;
 
     [Header("Pulsanti esistenti")]
     [SerializeField] private Button[] closeButtons = Array.Empty<Button>();
@@ -31,35 +37,62 @@ public sealed class ConstructionUI : MonoBehaviour
     [SerializeField] private RectTransform hitLine, hitWindow;
     [SerializeField] private Image[] notes = Array.Empty<Image>();
     [SerializeField] private Image[] tally = Array.Empty<Image>();
-    [SerializeField, Min(1)] private float noteSpeed = 220;
+    [SerializeField, Min(1)] private float noteSpeed = 340;
+    [SerializeField] private CanvasGroup rhythmGroup;
     [SerializeField] private Color pendingColor = new Color(.64f, .7f, .68f);
     [SerializeField] private Color hitColor = new Color(.36f, .81f, .64f);
     [SerializeField] private Color missColor = new Color(.95f, .4f, .34f);
 
     private ConstructionSystem system;
     private ConstructionMaterialRow[] materialRows;
+    private ConstructionBackpackUpgradeRow[] backpackUpgradeRows;
     private ConstructionRecipeRow[] recipeRows;
+    private ConstructionCategoryButton[] categoryButtons;
+    private int lastWorkbenchPhase = -1;
     private CraftingRecipe rhythmRecipe;
     private GameObject currentScreen;
     private bool visible, suspended;
 
     public GameObject CurrentScreen => currentScreen;
+    public ConstructionPieceCategory SelectedCategory => selectedCategory;
     public bool IsConfigured => screensRoot != null && shopScreen != null && workbenchScreen != null &&
         rhythmScreen != null && completedScreen != null && failedScreen != null &&
         shopSummary != null && shopMessage != null && workbenchSummary != null && workbenchMessage != null &&
         rhythmSummary != null && rhythmMessage != null && score != null && completedTitle != null &&
         completedSummary != null && completedMessage != null && failedTitle != null && failedSummary != null &&
-        failedMessage != null && hitLine != null && hitWindow != null && notes.Length >= 64 && tally.Length >= 64 &&
+        failedMessage != null && coinCounter != null && hitLine != null && hitWindow != null && notes.Length >= 64 && tally.Length >= 64 &&
         storageButton != null && cancelButton != null && backButton != null;
+
+    public Sprite GetPieceIcon(DraggableObject piece)
+    {
+        if (piece == null || recipeRows == null) return null;
+        var craftedPiece = piece.GetComponent<CraftedPiece>();
+        CraftingRecipe recipe = craftedPiece != null ? craftedPiece.Recipe : null;
+        for (int i = 0; i < recipeRows.Length; i++)
+        {
+            var row = recipeRows[i];
+            if (row == null || row.recipe == null) continue;
+            if (recipe != null && row.recipe == recipe && row.silhouette != null) return row.silhouette.sprite;
+            var prefabPiece = row.recipe.piecePrefab != null ? row.recipe.piecePrefab.GetComponent<DraggableObject>() : null;
+            if (prefabPiece != null && prefabPiece.PieceId == piece.PieceId && row.silhouette != null)
+                return row.silhouette.sprite;
+        }
+        return null;
+    }
 
     public void Initialize(ConstructionSystem owner)
     {
         if (!IsConfigured) throw new InvalidOperationException("Collega le schermate e gli elementi di Construction UI nel Canvas.");
         system = owner;
         materialRows = shopScreen.GetComponentsInChildren<ConstructionMaterialRow>(true);
+        backpackUpgradeRows = shopScreen.GetComponentsInChildren<ConstructionBackpackUpgradeRow>(true);
         recipeRows = workbenchScreen.GetComponentsInChildren<ConstructionRecipeRow>(true);
         foreach (var row in materialRows) row.Bind(owner);
+        foreach (var row in backpackUpgradeRows) row.Bind(owner);
         foreach (var row in recipeRows) row.Bind(owner);
+        categoryButtons = workbenchScreen.GetComponentsInChildren<ConstructionCategoryButton>(true);
+        foreach (var button in categoryButtons) button.Bind(this);
+        lastWorkbenchPhase = -1;
         foreach (var button in closeButtons)
         {
             if (button == null) continue;
@@ -78,18 +111,42 @@ public sealed class ConstructionUI : MonoBehaviour
     public void ShowShop()
     {
         Show(shopScreen);
-        shopSummary.text = "Credito di cantiere: " + system.Inventory.Coins + " monete\nAcquista le risorse, poi lavorale al banco.";
+        shopSummary.text = "Acquista risorse e potenzia qui lo zaino fino a 3 slot.";
         shopMessage.text = system.Message ?? "";
         foreach (var row in materialRows) row.Refresh();
+        foreach (var row in backpackUpgradeRows) row.Refresh();
     }
 
     public void ShowWorkbench()
     {
         Show(workbenchScreen);
-        workbenchSummary.text = "Fase costruttiva: " + (system.CurrentPhase + 1) + "    |    Credito: " + system.Inventory.Coins +
-            " monete\nScegli il pezzo da creare con i materiali acquistati.";
+        workbenchSummary.text = "Scegli il pezzo da creare con i materiali acquistati.";
         workbenchMessage.text = system.Message ?? "";
-        foreach (var row in recipeRows) row.Refresh();
+        bool phaseChanged = lastWorkbenchPhase != system.CurrentPhase;
+        if (phaseChanged) selectedCategory = ConstructionPieceCategories.ForPhase(system.CurrentPhase);
+        lastWorkbenchPhase = system.CurrentPhase;
+        RefreshCatalog(phaseChanged);
+    }
+
+    public void SelectCategory(ConstructionPieceCategory category)
+    {
+        bool changed = selectedCategory != category;
+        selectedCategory = category;
+        RefreshCatalog(changed);
+    }
+
+    private void RefreshCatalog(bool resetScroll)
+    {
+        if (recipeRows == null) return;
+        foreach (var row in recipeRows) row.Refresh(selectedCategory);
+        foreach (var button in categoryButtons) button.Refresh(selectedCategory);
+        if (categoryTitle != null) categoryTitle.text = ConstructionPieceCategories.Title(selectedCategory).ToUpperInvariant();
+        if (resetScroll && recipeScroll != null)
+        {
+            Canvas.ForceUpdateCanvases();
+            recipeScroll.StopMovement();
+            recipeScroll.verticalNormalizedPosition = 1;
+        }
     }
 
     public void ShowRhythm(CraftingRecipe recipe, RhythmSequence sequence)
@@ -97,6 +154,8 @@ public sealed class ConstructionUI : MonoBehaviour
         if (sequence.NoteTimes.Length > notes.Length || sequence.NoteTimes.Length > tally.Length)
             throw new InvalidOperationException("Il Canvas non contiene abbastanza note e giudizi per questa ricetta.");
         rhythmRecipe = recipe;
+        if (rhythmGroup != null) rhythmGroup.alpha = 1;
+        cancelButton.interactable = true;
         Show(rhythmScreen);
         rhythmSummary.text = recipe.displayName + "    |    " + recipe.bpm + " BPM\nPremi SPAZIO quando una nota attraversa la linea dorata.";
         rhythmMessage.text = "Perfetto: tutte le note corrette. Riuscita: almeno " + recipe.minimumHits + " su " + recipe.noteCount + ".";
@@ -130,7 +189,7 @@ public sealed class ConstructionUI : MonoBehaviour
     {
         bool succeeded = (outcome == CraftOutcome.NormalSuccess || outcome == CraftOutcome.PerfectSuccess) && piece != null;
         Show(succeeded ? completedScreen : failedScreen);
-        string summary = "Note corrette: " + hits + " / " + total + "    |    Credito: " + system.Inventory.Coins + " monete";
+        string summary = "Note corrette: " + hits + " / " + total;
         if (succeeded)
         {
             completedTitle.text = outcome == CraftOutcome.PerfectSuccess ? "Lavorazione perfetta" : "Pezzo completato";
@@ -146,6 +205,18 @@ public sealed class ConstructionUI : MonoBehaviour
         }
     }
 
+    public void BeginRhythmFinish(RhythmSequence sequence)
+    {
+        UpdateRhythm(sequence, sequence.NoteTimes[sequence.NoteTimes.Length - 1]);
+        cancelButton.interactable = false;
+        rhythmMessage.text = "Sequenza completata · risultati in arrivo…";
+    }
+
+    public void UpdateRhythmFinish(float progress)
+    {
+        if (rhythmGroup != null) rhythmGroup.alpha = 1 - Mathf.SmoothStep(0, 1, Mathf.Clamp01(progress));
+    }
+
     private void Show(GameObject selected)
     {
         currentScreen = selected;
@@ -157,8 +228,15 @@ public sealed class ConstructionUI : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (coinCounter != null && system != null)
+        {
+            string balance = system.Inventory.Coins.ToString();
+            if (coinCounter.text != balance) coinCounter.text = balance;
+        }
         if (visible && !suspended && currentScreen == completedScreen)
             storageButton.interactable = system != null && system.CanStoreCreatedPiece;
+        if (visible && !suspended && currentScreen == shopScreen && backpackUpgradeRows != null)
+            foreach (var row in backpackUpgradeRows) row.Refresh();
     }
 
     public void SetSuspended(bool value)
