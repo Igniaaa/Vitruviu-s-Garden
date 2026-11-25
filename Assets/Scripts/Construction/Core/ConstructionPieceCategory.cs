@@ -24,7 +24,7 @@ namespace Basilica.Crafting
             {
                 case ConstructionPieceCategory.Floors: return "Pavimenti";
                 case ConstructionPieceCategory.Columns: return "Colonne";
-                case ConstructionPieceCategory.Walls: return "Muri";
+                case ConstructionPieceCategory.Walls: return "Strutture";
                 case ConstructionPieceCategory.RoofSupports: return "Supporti tetti";
                 case ConstructionPieceCategory.Roofs: return "Tetti";
                 case ConstructionPieceCategory.Stairs: return "Scale";

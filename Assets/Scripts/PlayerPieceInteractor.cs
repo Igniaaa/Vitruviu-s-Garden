@@ -6,8 +6,8 @@ using System.Collections.Generic;
 // Può stare su qualunque GameObject (es. sulla root del player): non richiede più di
 // essere collocato sulla camera stessa, per evitare che Unity ne crei una nuova per errore.
 // Assegna nell'Inspector la Camera reale (quella con Cinemachine Brain) nel campo Player Camera.
-// Rileva col crosshair (centro schermo) i DraggableObject davanti al giocatore: un tasto
-// afferra/rilascia il pezzo, che poi segue lo sguardo restando a distanza fissa dalla camera.
+// Rileva col crosshair (centro schermo) i DraggableObject davanti al giocatore: E afferra
+// o rilascia il pezzo, i tasti 1-3 lo ripongono o lo estraggono dagli slot dello zaino.
 public class PlayerPieceInteractor : MonoBehaviour
 {
     [SerializeField] private Camera playerCamera;
@@ -27,8 +27,7 @@ public class PlayerPieceInteractor : MonoBehaviour
     [SerializeField] private TMP_Text promptText;
     [SerializeField] private string grabPromptMessage = "Premi E per afferrare";
     [SerializeField] private string releasePromptMessage = "Premi E per rilasciare";
-    [SerializeField] private string addPiecePromptMessage = "Premi E per aggiungere un pezzo allo zaino";
-    [SerializeField] private string backpackFullPromptMessage = "Zaino pieno: potenzialo nel negozio o premi E per rilasciare";
+    [SerializeField] private string storePiecePromptMessage = "riponi o scambia";
     [Header("Debug")]
     [SerializeField, Min(0.5f)] private float debugSpawnDistance = 1.5f;
     // Raggio dello SphereCast usato per il rilevamento (più tollerante di un raycast sottile
@@ -38,13 +37,15 @@ public class PlayerPieceInteractor : MonoBehaviour
     [SerializeField] private float aimRadius = 0.15f;
     [SerializeField] private float hidePromptDelay = 0.15f;
 
-    private readonly List<DraggableObject> carriedPieces = new List<DraggableObject>();
+    // La lista rappresenta tre slot fissi: null indica uno slot vuoto.
+    private readonly List<DraggableObject> carriedPieces = new List<DraggableObject> { null, null, null };
+    private DraggableObject heldPiece;
     private BackpackHud backpackHud;
     private int selectedSlotIndex = -1;
     private float lastPieceSeenTime = -1f;
     private bool promptVisible;
     private ConstructionStation lookedAtStation;
-    public bool IsHoldingPiece => carriedPieces.Count > 0;
+    public bool IsHoldingPiece => heldPiece != null && heldPiece.IsDragging;
     private int BackpackCapacity => ConstructionSystem.Instance != null
         ? Mathf.Clamp(ConstructionSystem.Instance.BackpackSlots, 1, 3)
         : 1;
@@ -126,7 +127,7 @@ public class PlayerPieceInteractor : MonoBehaviour
             SpawnDebugPiece();
         }
 
-        HandleBackpackSlotSelection();
+        HandleBackpackSlotKeys();
 
         lookedAtStation = null;
         DraggableObject lookedAtPiece = FindInteractablePiece();
@@ -140,12 +141,10 @@ public class PlayerPieceInteractor : MonoBehaviour
         UpdatePrompt(visible, IsHoldingPiece);
         if (visible && promptText != null && IsHoldingPiece)
         {
-            int capacity = BackpackCapacity;
-            if (lookedAtPiece == null) promptText.text = releasePromptMessage;
-            else if (carriedPieces.Count >= capacity) promptText.text = backpackFullPromptMessage;
-            else promptText.text = addPiecePromptMessage + " (" + carriedPieces.Count + "/" + capacity + ")";
+            string slotKeys = BackpackCapacity == 1 ? "1" : "1-" + BackpackCapacity;
+            promptText.text = "[" + interactKey + "] " + releasePromptMessage + " · [" + slotKeys + "] " + storePiecePromptMessage;
         }
-        if (lookedAtStation != null && promptText != null) promptText.text = lookedAtStation.Prompt;
+        if (!IsHoldingPiece && lookedAtStation != null && promptText != null) promptText.text = lookedAtStation.Prompt;
 
         if (Keyboard.current != null && Keyboard.current[interactKey].wasPressedThisFrame)
         {
@@ -155,10 +154,6 @@ public class PlayerPieceInteractor : MonoBehaviour
                 else if (lookedAtStation != null && ConstructionSystem.Instance != null)
                     ConstructionSystem.Instance.Open(lookedAtStation);
             }
-            else if (lookedAtPiece != null && carriedPieces.Count < BackpackCapacity)
-            {
-                AddToLoad(lookedAtPiece);
-            }
             else if (IsHoldingPiece) ReleaseSelectedPiece();
         }
 
@@ -166,9 +161,8 @@ public class PlayerPieceInteractor : MonoBehaviour
         {
             if (IsRotatingHeldPiece)
             {
-                DraggableObject selectedPiece = GetSelectedPiece();
-                if (selectedPiece != null)
-                    selectedPiece.RotateWhileHeld(playerCamera.transform, Mouse.current.delta.ReadValue(), heldPieceRotationSensitivity);
+                if (heldPiece != null)
+                    heldPiece.RotateWhileHeld(playerCamera.transform, Mouse.current.delta.ReadValue(), heldPieceRotationSensitivity);
             }
 
             Vector3 holdPoint = playerCamera.transform.position + playerCamera.transform.forward * holdDistance;
@@ -208,44 +202,51 @@ public class PlayerPieceInteractor : MonoBehaviour
 
     private void Grab(DraggableObject draggable)
     {
-        carriedPieces.Clear();
-        carriedPieces.Add(draggable);
-        selectedSlotIndex = 0;
+        heldPiece = draggable;
+        selectedSlotIndex = -1;
         draggable.BeginDrag();
     }
 
-    private void AddToLoad(DraggableObject draggable)
+    private void HandleBackpackSlotKeys()
     {
-        if (draggable == null || carriedPieces.Contains(draggable)) return;
-        DraggableObject currentPiece = GetSelectedPiece();
-        if (currentPiece != null) currentPiece.StoreInBackpack();
-        carriedPieces.Add(draggable);
-        selectedSlotIndex = carriedPieces.Count - 1;
-        draggable.BeginDrag();
+        if (Keyboard.current == null) return;
+        if (Keyboard.current.digit1Key.wasPressedThisFrame || Keyboard.current.numpad1Key.wasPressedThisFrame) UseBackpackSlot(0);
+        else if (Keyboard.current.digit2Key.wasPressedThisFrame || Keyboard.current.numpad2Key.wasPressedThisFrame) UseBackpackSlot(1);
+        else if (Keyboard.current.digit3Key.wasPressedThisFrame || Keyboard.current.numpad3Key.wasPressedThisFrame) UseBackpackSlot(2);
     }
 
-    private void HandleBackpackSlotSelection()
+    private void UseBackpackSlot(int index)
     {
-        if (!IsHoldingPiece || Keyboard.current == null) return;
-        if (Keyboard.current.digit1Key.wasPressedThisFrame || Keyboard.current.numpad1Key.wasPressedThisFrame) SelectBackpackSlot(0);
-        else if (Keyboard.current.digit2Key.wasPressedThisFrame || Keyboard.current.numpad2Key.wasPressedThisFrame) SelectBackpackSlot(1);
-        else if (Keyboard.current.digit3Key.wasPressedThisFrame || Keyboard.current.numpad3Key.wasPressedThisFrame) SelectBackpackSlot(2);
+        if (index >= BackpackCapacity) return;
+
+        DraggableObject storedPiece = carriedPieces[index];
+        if (IsHoldingPiece)
+        {
+            DraggableObject pieceToStore = heldPiece;
+            if (storedPiece == pieceToStore) return;
+
+            pieceToStore.StoreInBackpack();
+            carriedPieces[index] = pieceToStore;
+            if (storedPiece != null)
+            {
+                heldPiece = storedPiece;
+                storedPiece.RetrieveFromBackpack(GetHoldPoint());
+                selectedSlotIndex = -1;
+            }
+            else
+            {
+                heldPiece = null;
+                selectedSlotIndex = index;
+            }
+            return;
+        }
+
+        if (storedPiece == null) return;
+        carriedPieces[index] = null;
+        heldPiece = storedPiece;
+        selectedSlotIndex = -1;
+        storedPiece.RetrieveFromBackpack(GetHoldPoint());
     }
-
-    private void SelectBackpackSlot(int index)
-    {
-        if (index >= BackpackCapacity || index >= carriedPieces.Count || index == selectedSlotIndex) return;
-
-        DraggableObject currentPiece = GetSelectedPiece();
-        if (currentPiece != null) currentPiece.StoreInBackpack();
-        selectedSlotIndex = index;
-        DraggableObject selectedPiece = GetSelectedPiece();
-        if (selectedPiece != null)
-            selectedPiece.RetrieveFromBackpack(GetHoldPoint());
-    }
-
-    private DraggableObject GetSelectedPiece() =>
-        selectedSlotIndex >= 0 && selectedSlotIndex < carriedPieces.Count ? carriedPieces[selectedSlotIndex] : null;
 
     private Vector3 GetHoldPoint() => playerCamera.transform.position + playerCamera.transform.forward * holdDistance;
 
@@ -277,26 +278,15 @@ public class PlayerPieceInteractor : MonoBehaviour
 
     private void ReleaseSelectedPiece()
     {
-        DraggableObject releasedPiece = GetSelectedPiece();
+        DraggableObject releasedPiece = heldPiece;
+        heldPiece = null;
+        selectedSlotIndex = -1;
         if (releasedPiece != null && releasedPiece.IsDragging) releasedPiece.EndDrag();
-        if (selectedSlotIndex >= 0 && selectedSlotIndex < carriedPieces.Count)
-            carriedPieces.RemoveAt(selectedSlotIndex);
-
-        if (carriedPieces.Count == 0)
-        {
-            selectedSlotIndex = -1;
-            return;
-        }
-
-        selectedSlotIndex = Mathf.Min(selectedSlotIndex, carriedPieces.Count - 1);
-        DraggableObject nextPiece = GetSelectedPiece();
-        if (nextPiece != null) nextPiece.RetrieveFromBackpack(GetHoldPoint());
     }
 
     private void UpdateCarriedPieceTargets(Vector3 holdPoint)
     {
-        DraggableObject selectedPiece = GetSelectedPiece();
-        if (selectedPiece != null) selectedPiece.UpdateDragTarget(holdPoint);
+        if (heldPiece != null) heldPiece.UpdateDragTarget(holdPoint);
     }
 
     private void RefreshBackpackHud()
@@ -325,7 +315,9 @@ public class PlayerPieceInteractor : MonoBehaviour
 
         if (visible && promptText != null)
         {
-            promptText.text = isHolding ? releasePromptMessage : grabPromptMessage;
+            promptText.text = isHolding
+                ? "[" + interactKey + "] " + releasePromptMessage
+                : "[" + interactKey + "] " + grabPromptMessage;
         }
 
         if (rotationPrompt != null)

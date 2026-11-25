@@ -74,14 +74,6 @@ public static class ConstructionUIEditorSetup
             Undo.AddComponent<ConstructionBackpackUpgradeRow>(button.gameObject);
         var viewport = panel.Find("Viewport").GetComponent<RectTransform>();
         Place(viewport, 44, -290, 1032, 286);
-        var interactor = UnityEngine.Object.FindFirstObjectByType<PlayerPieceInteractor>(FindObjectsInactive.Include);
-        if (interactor != null)
-        {
-            var interactorData = new SerializedObject(interactor);
-            interactorData.FindProperty("backpackFullPromptMessage").stringValue =
-                "Zaino pieno: potenzialo nel negozio o premi E per rilasciare";
-            interactorData.ApplyModifiedProperties();
-        }
         Canvas.ForceUpdateCanvases();
         Undo.CollapseUndoOperations(group);
         EditorSceneManager.MarkSceneDirty(scene);

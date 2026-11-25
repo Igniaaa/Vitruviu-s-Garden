@@ -80,7 +80,7 @@ Le cinque schermate di acquisto e crafting sono salvate sotto `Canvas > Construc
 
 `PlayerInputHandler` clona l'asset delle azioni, cerca la mappa `Player` e legge movimento, visuale, salto, corsa, diario e pausa. `FirstPersonController` usa questi valori per muovere il personaggio.
 
-Alcuni comandi sono letti direttamente dagli altri script: **E** per pezzi/postazioni e dialoghi, **tasto destro** per ruotare i pezzi, **Spazio** per il ritmo. Cambiare soltanto l'asset degli input non cambia automaticamente questi comandi.
+Alcuni comandi sono letti direttamente dagli altri script: **E** per prendere/lasciare i pezzi, usare le postazioni e avanzare nei dialoghi; **1–3** per riporre, estrarre o scambiare i pezzi negli slot dello zaino; **tasto destro** per ruotare i pezzi; **Spazio** per il ritmo. Cambiare soltanto l'asset degli input non cambia automaticamente questi comandi.
 
 ### B. Compra i materiali
 
@@ -121,7 +121,7 @@ Esc sospende il minigioco e il suo audio. Anche la perdita del focus dell'applic
 
 La riuscita crea il prefab sull'`outputPoint` del banco e mostra un'interfaccia trasparente sul bordo dello schermo: guardi il pezzo reale nella scena, senza foto o anteprima. `CraftingResultView` porta temporaneamente la camera del giocatore su un'inquadratura ravvicinata del tavolo. Puoi chiudere il menu e premere E guardando il pezzo, oppure scegliere **Sposta nel recinto**: `ConstructionStorageArea` trasferisce la stessa istanza in un punto libero del deposito, senza cambiare costi o conteggi, e torna alle ricette. Entrambe le azioni ripristinano la visuale precedente. Se il deposito è pieno, il pezzo rimane sul banco e resta attiva la visuale dedicata.
 
-`PlayerPieceInteractor` chiama `DraggableObject.BeginDrag()`. Il pezzo segue un punto davanti alla camera, si rimpicciolisce e può essere ruotato tenendo il tasto destro del mouse. Con un Rigidbody, l'inseguimento avviene tramite velocità in `FixedUpdate()`.
+`PlayerPieceInteractor` usa E per prendere o lasciare un pezzo. I tasti 1, 2 e 3 usano lo slot corrispondente: a mano vuota estraggono il pezzo; con un pezzo in mano lo ripongono nello slot, scambiandolo con quello presente se occupato. La raccolta non occupa uno slot finché non riponi il pezzo. Il pezzo segue un punto davanti alla camera, si rimpicciolisce e può essere ruotato tenendo il tasto destro del mouse. Con un Rigidbody, l'inseguimento avviene tramite velocità in `FixedUpdate()`.
 
 Quando il pezzo entra in uno slot, `PlaceholderSlot` confronta il suo `pieceId` con quello atteso. Se combaciano, si iscrive all'evento `OnReleased`. **Entrare nello slot non basta: devi rilasciare il pezzo con E mentre è dentro.**
 

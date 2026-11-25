@@ -4,8 +4,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-// All graphics are authored and saved under Canvas/Construction UI. This controller
-// only binds data, actions and visibility; it never builds or restyles the interface.
+// Static graphics are authored under Canvas/Construction UI; this controller binds
+// them and creates the transient recipe tooltip while the pointer is over a recipe.
 public sealed class ConstructionUI : MonoBehaviour
 {
     [Header("Schermate salvate nel Canvas")]
@@ -23,6 +23,11 @@ public sealed class ConstructionUI : MonoBehaviour
     [SerializeField] private TMP_Text rhythmSummary, rhythmMessage, score;
     [SerializeField] private TMP_Text completedTitle, completedSummary, completedMessage;
     [SerializeField] private TMP_Text failedTitle, failedSummary, failedMessage;
+
+    [Header("Tooltip ricette")]
+    [SerializeField] private Vector2 recipeTooltipSize = new Vector2(300, 300);
+    [SerializeField] private Color recipeTooltipBackground = new Color(.08f, .12f, .13f, .98f);
+    [SerializeField] private Color recipeTooltipTextColor = new Color(.94f, .91f, .82f);
 
     [Header("Catalogo dei pezzi")]
     [SerializeField] private TMP_Text categoryTitle;
@@ -52,12 +57,27 @@ public sealed class ConstructionUI : MonoBehaviour
     private CraftingRecipe rhythmRecipe;
     private GameObject currentScreen;
     private bool visible, suspended;
+    private RectTransform recipeTooltip;
+    private TMP_Text recipeTooltipText;
+    private RectTransform canvasRect;
+    private Canvas uiCanvas;
 
     public GameObject CurrentScreen => currentScreen;
     public ConstructionPieceCategory SelectedCategory => selectedCategory;
+
+    private void OnEnable()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            var child = transform.GetChild(i);
+            if (child.name.StartsWith("Tooltip pezzo", StringComparison.Ordinal))
+                child.gameObject.SetActive(false);
+        }
+    }
+
     public bool IsConfigured => screensRoot != null && shopScreen != null && workbenchScreen != null &&
         rhythmScreen != null && completedScreen != null && failedScreen != null &&
-        shopSummary != null && shopMessage != null && workbenchSummary != null && workbenchMessage != null &&
+        shopSummary != null && shopMessage != null && workbenchMessage != null &&
         rhythmSummary != null && rhythmMessage != null && score != null && completedTitle != null &&
         completedSummary != null && completedMessage != null && failedTitle != null && failedSummary != null &&
         failedMessage != null && coinCounter != null && hitLine != null && hitWindow != null && notes.Length >= 64 && tally.Length >= 64 &&
@@ -84,14 +104,31 @@ public sealed class ConstructionUI : MonoBehaviour
     {
         if (!IsConfigured) throw new InvalidOperationException("Collega le schermate e gli elementi di Construction UI nel Canvas.");
         system = owner;
+        EnsureRecipeTooltip();
         materialRows = shopScreen.GetComponentsInChildren<ConstructionMaterialRow>(true);
         backpackUpgradeRows = shopScreen.GetComponentsInChildren<ConstructionBackpackUpgradeRow>(true);
         recipeRows = workbenchScreen.GetComponentsInChildren<ConstructionRecipeRow>(true);
         foreach (var row in materialRows) row.Bind(owner);
         foreach (var row in backpackUpgradeRows) row.Bind(owner);
-        foreach (var row in recipeRows) row.Bind(owner);
+        foreach (var row in recipeRows) row.Bind(owner, this);
         categoryButtons = workbenchScreen.GetComponentsInChildren<ConstructionCategoryButton>(true);
-        foreach (var button in categoryButtons) button.Bind(this);
+        int visibleCategoryIndex = 0;
+        foreach (var button in categoryButtons)
+        {
+            button.Bind(this);
+            bool visible = button.category != ConstructionPieceCategory.Walls;
+            button.gameObject.SetActive(visible);
+            if (!visible) continue;
+
+            var rect = button.transform as RectTransform;
+            if (rect != null)
+            {
+                var position = rect.anchoredPosition;
+                position.y = -visibleCategoryIndex * (rect.rect.height + 10f);
+                rect.anchoredPosition = position;
+            }
+            visibleCategoryIndex++;
+        }
         lastWorkbenchPhase = -1;
         foreach (var button in closeButtons)
         {
@@ -120,7 +157,8 @@ public sealed class ConstructionUI : MonoBehaviour
     public void ShowWorkbench()
     {
         Show(workbenchScreen);
-        workbenchSummary.text = "Scegli il pezzo da creare con i materiali acquistati.";
+        if (workbenchSummary != null)
+            workbenchSummary.text = "Scegli il pezzo da creare con i materiali acquistati.";
         workbenchMessage.text = system.Message ?? "";
         bool phaseChanged = lastWorkbenchPhase != system.CurrentPhase;
         if (phaseChanged) selectedCategory = ConstructionPieceCategories.ForPhase(system.CurrentPhase);
@@ -219,6 +257,7 @@ public sealed class ConstructionUI : MonoBehaviour
 
     private void Show(GameObject selected)
     {
+        if (selected != workbenchScreen) HideRecipeTooltip();
         currentScreen = selected;
         foreach (var screen in new[] { shopScreen, workbenchScreen, rhythmScreen, completedScreen, failedScreen })
             screen.SetActive(screen == selected);
@@ -228,6 +267,8 @@ public sealed class ConstructionUI : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (recipeTooltip != null && recipeTooltip.gameObject.activeSelf)
+            PositionRecipeTooltip(Input.mousePosition);
         if (coinCounter != null && system != null)
         {
             string balance = system.Inventory.Coins.ToString();
@@ -242,14 +283,121 @@ public sealed class ConstructionUI : MonoBehaviour
     public void SetSuspended(bool value)
     {
         suspended = value;
+        if (suspended) HideRecipeTooltip();
         if (screensRoot != null) screensRoot.SetActive(visible && !suspended);
     }
 
     public void Hide()
     {
+        HideRecipeTooltip();
         visible = false;
         currentScreen = null;
         if (screensRoot != null) screensRoot.SetActive(false);
+    }
+
+    public void ShowRecipeTooltip(CraftingRecipe recipe, Vector2 screenPosition)
+    {
+        if (recipe == null || currentScreen != workbenchScreen || suspended) return;
+        if (string.IsNullOrWhiteSpace(recipe.description))
+        {
+            HideRecipeTooltip();
+            return;
+        }
+        EnsureRecipeTooltip();
+
+        recipeTooltipText.text = recipe.description;
+        recipeTooltip.gameObject.SetActive(true);
+        recipeTooltip.SetAsLastSibling();
+        PositionRecipeTooltip(screenPosition);
+    }
+
+    public void HideRecipeTooltip()
+    {
+        if (recipeTooltip != null) recipeTooltip.gameObject.SetActive(false);
+    }
+
+    private void EnsureRecipeTooltip()
+    {
+        uiCanvas = GetComponent<Canvas>();
+        canvasRect = transform as RectTransform;
+        if (recipeTooltip != null)
+        {
+            HideDuplicateRecipeTooltips();
+            return;
+        }
+
+        var existingTooltip = transform.Find("Tooltip pezzo");
+        if (existingTooltip != null)
+        {
+            recipeTooltip = existingTooltip as RectTransform;
+            recipeTooltipText = existingTooltip.GetComponentInChildren<TMP_Text>(true);
+            if (recipeTooltip != null && recipeTooltipText != null)
+            {
+                recipeTooltip.sizeDelta = recipeTooltipSize;
+                var existingImage = recipeTooltip.GetComponent<Image>();
+                if (existingImage != null) existingImage.raycastTarget = false;
+                recipeTooltipText.raycastTarget = false;
+                HideDuplicateRecipeTooltips();
+                return;
+            }
+            recipeTooltip = null;
+            recipeTooltipText = null;
+        }
+
+        var panel = new GameObject("Tooltip pezzo", typeof(RectTransform), typeof(Image), typeof(Outline));
+        panel.layer = gameObject.layer;
+        panel.transform.SetParent(transform, false);
+        recipeTooltip = panel.GetComponent<RectTransform>();
+        recipeTooltip.anchorMin = recipeTooltip.anchorMax = new Vector2(0, 1);
+        recipeTooltip.pivot = new Vector2(0, 1);
+        recipeTooltip.sizeDelta = recipeTooltipSize;
+        var background = panel.GetComponent<Image>();
+        background.color = recipeTooltipBackground;
+        background.raycastTarget = false;
+        var outline = panel.GetComponent<Outline>();
+        outline.effectColor = new Color(.91f, .68f, .32f, 1);
+        outline.effectDistance = new Vector2(2, -2);
+        outline.useGraphicAlpha = true;
+
+        var textObject = new GameObject("Dettagli", typeof(RectTransform), typeof(TextMeshProUGUI));
+        textObject.layer = gameObject.layer;
+        textObject.transform.SetParent(panel.transform, false);
+        var textRect = textObject.GetComponent<RectTransform>();
+        textRect.anchorMin = Vector2.zero;
+        textRect.anchorMax = Vector2.one;
+        textRect.offsetMin = new Vector2(16, 16);
+        textRect.offsetMax = new Vector2(-16, -16);
+        recipeTooltipText = textObject.GetComponent<TextMeshProUGUI>();
+        recipeTooltipText.font = TMP_Settings.defaultFontAsset;
+        recipeTooltipText.fontSize = 18;
+        recipeTooltipText.color = recipeTooltipTextColor;
+        recipeTooltipText.alignment = TextAlignmentOptions.TopLeft;
+        recipeTooltipText.textWrappingMode = TextWrappingModes.Normal;
+        recipeTooltipText.raycastTarget = false;
+
+        panel.SetActive(false);
+        HideDuplicateRecipeTooltips();
+    }
+
+    private void HideDuplicateRecipeTooltips()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            var child = transform.GetChild(i);
+            if (child != recipeTooltip && child.name.StartsWith("Tooltip pezzo", StringComparison.Ordinal))
+                child.gameObject.SetActive(false);
+        }
+    }
+
+    private void PositionRecipeTooltip(Vector2 screenPosition)
+    {
+        if (recipeTooltip == null || canvasRect == null) return;
+        Camera eventCamera = uiCanvas != null && uiCanvas.renderMode != RenderMode.ScreenSpaceOverlay
+            ? uiCanvas.worldCamera
+            : null;
+        if (!RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPosition, eventCamera, out var localPoint))
+            return;
+        recipeTooltip.anchoredPosition = localPoint - new Vector2(canvasRect.rect.xMin, canvasRect.rect.yMax);
     }
 
     private void Close() => system.Close();

@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Pavimento
   m_EditorClassIdentifier: Basilica.Crafting.Core::Basilica.Crafting.CraftingRecipe
   displayName: Pavimento
+  description: Prepara le lastre di pietra che formeranno il piano calpestabile della basilica.
   buildPhase: 1
   piecePrefab: {fileID: 4700495186851542700, guid: b548b69a5b787e94db8c5d4d12427975, type: 3}
   costs:

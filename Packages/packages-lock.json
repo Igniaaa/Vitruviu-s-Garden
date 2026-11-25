@@ -12,11 +12,10 @@
       "url": "https://package.openupm.com"
     },
     "com.simoxus.blender-bridge": {
-      "version": "https://github.com/Zhy-3DEnv/blender-bridge-for-unity.git",
+      "version": "file:../blender-bridge-for-unity-main",
       "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "4ee845dcf886c6f800023d71162915530ccf95a6"
+      "source": "local",
+      "dependencies": {}
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",

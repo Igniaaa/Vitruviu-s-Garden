@@ -33,7 +33,7 @@ Questa mappa copre i **31 script in `Assets/Scripts`**, i **2 script del control
 
 ### [PlayerPieceInteractor.cs](../Assets/Scripts/PlayerPieceInteractor.cs)
 
-**Compito:** riconoscere cosa stai guardando, mostrare il suggerimento, prendere/rilasciare pezzi e aprire postazioni.
+**Compito:** riconoscere cosa stai guardando, mostrare il suggerimento, prendere/rilasciare pezzi e usare i tasti 1–3 per riporli, estrarli o scambiarli nello zaino; E apre anche le postazioni.
 
 - Campi: `playerCamera`, `interactRange`, `holdDistance`, `interactKey`, `aimRadius`, `hidePromptDelay`, `heldPieceRotationSensitivity`, oggetti UI dei suggerimenti.
 - Usa la camera assegnata o, come ripiego, `Camera.main`.
@@ -225,7 +225,7 @@ La verifica personalizzata chiama la configurazione e **salva la scena**, poi si
 
 ## 7. Ordine di lettura consigliato per chi programma
 
-1. `PlayerPieceInteractor` → `DraggableObject` → `PlaceholderSlot`: dal comando E alla posa.
+1. `PlayerPieceInteractor` → `DraggableObject` → `PlaceholderSlot`: E prende o lascia il pezzo; i tasti 1–3 lo ripongono, lo estraggono o lo scambiano nello zaino, poi E lo posa nello slot.
 2. `MonumentProgressTracker` → `MonumentMilestoneSet` → `ArchitectDialoguePanel`: dalla posa al progresso e al racconto.
 3. `CraftingRecipe` → `MaterialInventory` → `RhythmSequence`: le regole di produzione.
 4. `ConstructionSystem` → `ConstructionStation` → `ConstructionUI` → `RhythmAudio`: come le regole arrivano in gioco.

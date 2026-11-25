@@ -116,7 +116,7 @@ Se rinomini un'azione devi aggiornare anche il nome configurato in `PlayerInputH
 
 | Comando separato dall'asset Player | Dove cambiarlo |
 | --- | --- |
-| Afferra/rilascia e apri postazione | `PlayerPieceInteractor.interactKey`, configurabile in Inspector |
+| Afferra/rilascia e apri postazione | `PlayerPieceInteractor.interactKey` (E); usa 1–3 per riporre, estrarre o scambiare nello zaino |
 | Avanzamento dialogo | `ArchitectDialoguePanel.advanceKey`, configurabile in Inspector |
 | Rotazione pezzo con tasto destro | Controllo di `Mouse.current.rightButton` in `PlayerPieceInteractor` |
 | Colpo ritmico con Spazio | Binding `"<Keyboard>/space"` creato in `ConstructionSystem.Awake()` |

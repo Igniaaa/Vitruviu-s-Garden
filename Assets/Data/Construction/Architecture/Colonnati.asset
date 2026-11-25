@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Colonnati
   m_EditorClassIdentifier: Basilica.Crafting.Core::Basilica.Crafting.CraftingRecipe
   displayName: Colonnati e colonne
+  description: Costruisci fusti e colonnati che sostengono il portico e scandiscono gli spazi.
   buildPhase: 2
   piecePrefab: {fileID: 4700495186851542700, guid: b548b69a5b787e94db8c5d4d12427975, type: 3}
   outputMaterial: {fileID: 2100000, guid: 361171c97ec355c4abc470a2b3776a22, type: 2}

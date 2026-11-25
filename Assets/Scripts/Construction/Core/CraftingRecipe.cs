@@ -17,6 +17,7 @@ namespace Basilica.Crafting
     public sealed class CraftingRecipe : ScriptableObject
     {
         public string displayName;
+        [TextArea(2, 3)] public string description;
         [Min(0)] public int buildPhase;
         public GameObject piecePrefab;
         public Material outputMaterial;

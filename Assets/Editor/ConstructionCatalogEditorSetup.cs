@@ -83,11 +83,16 @@ public static class ConstructionCatalogEditorSetup
         Text("Intestazione categorie", "CATEGORIE", panel, 40, -211, 230, 25, 16, Muted);
         var title = Text("Categoria selezionata", "FONDAMENTA", panel, 300, -211, 1096, 25, 18, Gold);
         var categories = (ConstructionPieceCategory[])Enum.GetValues(typeof(ConstructionPieceCategory));
+        int visibleCategoryIndex = 0;
         for (int i = 0; i < categories.Length; i++)
         {
             var category = categories[i];
             var rect = sidebar.Find(category.ToString()) as RectTransform ?? Rect(category.ToString(), sidebar);
-            Place(rect, 0, -i * 62, 230, 52);
+            bool visible = category != ConstructionPieceCategory.Walls;
+            rect.gameObject.SetActive(visible);
+            if (!visible) continue;
+            Place(rect, 0, -visibleCategoryIndex * 62, 230, 52);
+            visibleCategoryIndex++;
             var background = rect.GetComponent<Image>() ?? Undo.AddComponent<Image>(rect.gameObject); background.color = Card;
             var button = rect.GetComponent<Button>() ?? Undo.AddComponent<Button>(rect.gameObject); button.targetGraphic = background;
             var label = Text("Etichetta", ConstructionPieceCategories.Title(category).ToUpperInvariant(), rect, 16, 0, 198, 52, 19, Paper);
